@@ -7,7 +7,7 @@ season = 4
 urls = {'profit_loss':'https://mops.twse.com.tw/mops/web/ajax_t163sb04', #綜合損益
         'asset_debt': 'https://mops.twse.com.tw/mops/web/t163sb05', #資產負債,
         'operation_revenue': 'https://mops.twse.com.tw/mops/web/t21sc04_ifrs', #營業收入
-        'operation_analysis': 'https://mops.twse.com.tw/mops/web/t163sb06', #營業分析
+        'operation_analysis': 'https://mops.twse.com.tw/mops/web/t163sb06'#, 營業分析
         #'gross': 'https://mops.twse.com.tw/mops/web/t163sb07' #毛利率(可以從綜合損益找到）
         }
 
