@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import config
 
-year = 109
+
 urls = {'profit_loss':'https://mops.twse.com.tw/mops/web/ajax_t163sb04', #綜合損益
         'asset_debt': 'https://mops.twse.com.tw/mops/web/t163sb05', #資產負債,
         'operation_revenue': 'https://mops.twse.com.tw/mops/web/t21sc04_ifrs', #營業收入
@@ -43,5 +43,5 @@ def extration_by_season_per_year(df_list, column_names, year):
     return norms
 
 data = query(109, 'profit_loss')
-norm = extration_by_season_per_year(data, col, 109)
+norm = extration_by_season_per_year(data, config.profit_loss_col['standard'], 109)
 
