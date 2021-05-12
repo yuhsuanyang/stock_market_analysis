@@ -7,7 +7,8 @@ import config
 urls = {'profit_loss':'https://mops.twse.com.tw/mops/web/ajax_t163sb04', #綜合損益
         'asset_debt': 'https://mops.twse.com.tw/mops/web/ajax_t163sb05', #資產負債,
         'operation_revenue': 'https://mops.twse.com.tw/mops/web/t21sc04_ifrs', #每月營業收入
-        'operation_analysis': 'https://mops.twse.com.tw/mops/web/ajax_t163sb06'#, 營業分析
+        'operation_analysis': 'https://mops.twse.com.tw/mops/web/ajax_t163sb06', # 營業分析
+        'dividend': 'https://mops.twse.com.tw/mops/web/ajax_t05st09' #股利政策
         }
 
 
