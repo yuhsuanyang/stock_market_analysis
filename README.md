@@ -5,21 +5,21 @@ A UI to present stock data of listed market
 ### schedule
 
 1. cashflow table
-   - [ ] crawl
+   - [x] crawl
    - [x] visualize
 2. profit loss
-   - [ ] crawl
+   - [x] crawl
    - [ ] visualize
 3. asset debt
-   - [ ] crawl
+   - [x] crawl
    - [ ] visualize
 4. dividend
    - [x] crawl
    - [ ] visualize
 5. stock price
-   - [ ] crawl history
+   - [x] crawl history
    - [ ] crawl real time
-   - [ ] visualize
+   - [x] visualize
 6. recommandation
 7. cascade django
 
@@ -29,6 +29,8 @@ A UI to present stock data of listed market
 
 - 一般公司：
   - 營業收入 = 營業成本 + 營業毛利
+  - 營業利益 = 營業收入 - 營業成本 - 營業費用
+  - 淨利 = 營業收入 - 營業成本 - 營業費用 + 營業外收入及支出
   - 毛利率 ＝營業毛利/營業收入
 - 銀行：
   - 營業收入 = 利息淨收益＋利息以外淨損益

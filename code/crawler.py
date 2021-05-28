@@ -1,8 +1,8 @@
 import argparse
 import pickle
 import time
+from io import StringIO
 
-import numpy as np
 import pandas as pd
 import requests
 
@@ -14,7 +14,7 @@ URLS = {'profit_loss': 'https://mops.twse.com.tw/mops/web/ajax_t163sb04',  # 綜
         'operation_revenue': 'https://mops.twse.com.tw/mops/web/t21sc04_ifrs',
         # 營業分析(not necessary)
         'operation_analysis': 'https://mops.twse.com.tw/mops/web/ajax_t163sb06',
-        'cash_flow': 'https://mops.twse.com.tw/mops/web/ajax_t164sb05'
+        'cash_flow': 'https://mops.twse.com.tw/mops/web/ajax_t164sb05'  # 現金流量表
         }
 
 
@@ -70,47 +70,18 @@ def query_dividend(stock_code):
     return df
 
 
-def get_stock_meta_data():
-    print('downloading data from website')
-    res = requests.get("http://isin.twse.com.tw/isin/C_public.jsp?strMode=2")
-    print('creating dataframe')
-    df = pd.read_html(res.text)[0][[0, 2, 4]]
-    df = df.drop([0, 1]).dropna().reset_index(drop=True)
-    df.columns = ['full_name', 'listed_date', 'industry_type']
-    code_and_name = []
-    for name in df.full_name:
-        rename = name.replace('\u3000', ' ').split(' ')
-        code_and_name.append(rename)
-
-    df[['code', 'name']] = pd.DataFrame(code_and_name)
-
-    return df[['code', 'name', 'listed_date', 'industry_type']].iloc[0:952]
-
-
-def merge_by_season_per_year(df_list, column_names, company_type, year):
-    # company type
-    #    1: bank
-    #    3: standard
-    #    4: holdings
-    #    5: insurance
-    #    6: other
-
-    norms = {}
-    for col in column_names[2:]:
-        norm_data = df_list[0][company_type][['公司代號']]
-        for i in range(4):
-            # print(i)
-            new_data = df_list[i][company_type][['公司代號', col]]
-            new_data.columns = ['公司代號', '公司名稱', f"{year}_{i+1}"]
-            norm_data = norm_data.merge(new_data, how='outer')
-        norms[col] = norm_data
-    return norms
+def query_price_history(stock_code):
+    start = int(time.mktime(time.strptime('2016-01-01', '%Y-%m-%d')))
+    end = int(time.time())  # now
+    url = f"https://query1.finance.yahoo.com/v7/finance/download/{stock_code}.TW?period1={start}&period2={end}&interval=1d&events=history&crumb=DCkS0u002FOZyL"
+    res = requests.get(url)
+    return pd.read_csv(StringIO(res.text))
 
 
 def summary_cashflow(df_list, year, seasons):
     processed_df = []
     for df in df_list:
-        cashflow_df = pd.DataFrame(pd.DataFrame(df[1]).values)[[0, 1]]
+        cashflow_df = pd.DataFrame(pd.DataFrame(df[-1]).values)[[0, 1]]
         cashflow_df = cashflow_df[cashflow_df[0].isin(
             config.cashflow_col.keys())].reset_index(drop=True).T
         cashflow_df.columns = cashflow_df.iloc[0]
@@ -128,6 +99,23 @@ def save(filename, target):
         pickle.dump(target, f)
 
 
+def get_stock_meta_data():
+    print('downloading data from website')
+    res = requests.get("http://isin.twse.com.tw/isin/C_public.jsp?strMode=2")
+    print('creating dataframe')
+    df = pd.read_html(res.text)[0][[0, 2, 4]]
+    df = df.drop([0, 1]).dropna().reset_index(drop=True)
+    df.columns = ['full_name', 'listed_date', 'industry_type']
+    code_and_name = []
+    for name in df.full_name:
+        rename = name.replace('\u3000', ' ').split(' ')
+        code_and_name.append(rename)
+
+    df[['code', 'name']] = pd.DataFrame(code_and_name)
+
+    return df[['code', 'name', 'listed_date', 'industry_type']].iloc[0:952]
+
+
 def get_cashflow_table(year, previous=None):
     stocks = pd.read_csv('../data_sample/stock_meta_data.csv')
     if previous:
@@ -140,14 +128,18 @@ def get_cashflow_table(year, previous=None):
         cashflow_tables = {}
         start = 0
     anomaly = config.cashflow_anomaly
-    counter = 0
+    counter = time.time()
     for i in range(start, len(stocks)):
         code = stocks['code'][i]
+        listed_year = int(stocks['listed_date'][i].split('/')[0]) - 1911
         finish = 0
         print(code)
-        if code in anomaly:
+        # if code in anomaly:
+        if (listed_year-1) >= year:
+            print(f'    {listed_year} listed')
             df = []
             continue
+
         while not finish:
             try:
                 df, seasons = query_mops(year, 'cash_flow', code, 2)
@@ -159,20 +151,64 @@ def get_cashflow_table(year, previous=None):
                 time.sleep(10)
 
         cashflow_tables[code] = df
-        counter += 1
-        if not counter % 10:
+        # counter += 1
+        if (time.time()-counter) > 10:
             save(file_name, cashflow_tables)
             print('autosaved, take a break')
             time.sleep(60)
+            counter = time.time()
 
     save(file_name, cashflow_tables)
+
+
+def get_historical_price():
+    stocks = pd.read_csv('../data_sample/stock_meta_data.csv')
+    price_dict = {}
+
+    for stock_id in stocks.code:
+        df = query_price_history(stock_id)
+        price_dict[stock_id] = df
+        print(stock_id)
+    save('stock_price.pkl', price_dict)
+
+
+def get_multiple_company_tables(term, company_columns, company_column_names, company_type):
+    raw_data = {}
+    for year in range(105, 110):
+        print(year)
+        data, _ = query_mops(year, term)
+        for i in company_type:
+            print(i)
+            for season in range(4):
+                selected_columns = []
+                columns = [('year', 'code')]
+                for col in company_columns[company_type[i]]:
+                    if col in data[season][i].columns:
+                        selected_columns.append(col)
+                        # print(col)
+                        if col != '公司代號':
+                            columns.append((f"{year}_{season+1}", col))
+        #        print(columns)
+                data1 = data[season][i][selected_columns]
+        #        print(data1.columns)
+                data1.columns = pd.MultiIndex.from_tuples(columns)
+                if year == 105 and season == 0:
+                    raw_data[i] = data1
+                else:
+                    raw_data[i] = raw_data[i].merge(
+                        data1, on=[('year', 'code')], how='outer')
+
+    for i in raw_data:
+        raw_data[i].to_csv(
+            f'../data_sample/{term}/{company_type[i]}_profit_loss.csv', index=False)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--target', type=str, required=True,
                         help='assign query target')
-    parser.add_argument('--previous', type=str, required=False, default=None)
+    parser.add_argument('--previous', type=str,
+                        required=False, default=None)
     parser.add_argument('--year', type=int, required=False)
     args = parser.parse_args()
 
@@ -181,14 +217,31 @@ if __name__ == '__main__':
         meta_data.to_csv('../data_sample/stock_meta_data.csv', index=False)
 
     elif args.target == 'profit_loss':
-        data = query(109, 'profit_loss')
-        norm = merge_by_season_per_year(
-            data, config.profit_loss_col['insurance'], 5, 109)
+        company_type = {1: 'bank', 3: 'standard',
+                        4: 'holdings', 5: 'insurance', 6: 'other'}
+
+        company_columns_names = {1: ['code', '利息淨收益', '利息以外淨損益', '各項提存', '繼續營業單位稅前淨利', '營業費用', '基本每股盈餘'],
+                                 3: ['code', '營業收入', '營業利益', '營業毛利', '營業成本', '營業費用',
+                                     '營業外收入及支出', '本期淨利', '基本每股盈餘'],
+                                 4: ['code', '利息淨收益', '利息以外淨收益', '淨收益', '營業費用', '基本每股盈餘'],
+                                 5: ['code', '營業收入', '營業利益', '營業成本', '營業費用', '營業外收入及支出',
+                                     '本期淨利', '基本每股盈餘'],
+                                 6: ['code', '收入', '支出', '繼續營業單位稅前淨利', '基本每股盈餘']}
+
+        get_multiple_company_tables(
+            args.target, config.profit_loss_col, company_columns_names, company_type)
 
     elif args.target == 'asset_debt':
-        data = query(109, 'asset_debt')
-        norm = merge_by_season_per_year(
-            data, config.asset_debt_col['insurance'], 5, 109)
+        company_type = {1: 'bank', 3: 'standard',
+                        4: 'holdings', 5: 'insurance'}
+        company_column_names = {1: ['code', '資產總額', '負債總額', '權益總額', '股本', '每股參考淨值'],
+                                3: ['code', '流動資產', '非流動資產', '資產總額', '流動負債', '非流動負債',
+                                    '負債總額', '權益總額', '股本', '每股參考淨值'],
+                                4: ['code', '資產總額', '負債總額', '權益總額', '股本', '每股參考淨值'],
+                                5: ['code', '資產總額', '負債總額', '權益總額', '股本', '每股參考淨值']}
+
+        get＿multiple_company_tables(
+            args.target, config.asset_debt_col, company_column_names, company_type)
 
     elif args.target == 'dividend':
         stocks = pd.read_csv('../data_sample/stock_meta_data.csv')['code']
@@ -199,8 +252,10 @@ if __name__ == '__main__':
                 result[stock_code] = d
             except:
                 print(stock_code, 'fail')
-
         save('dividend', result)
 
-    elif args.target == 'cash_flow':
+    elif args.target == 'cashflow':
         get_cashflow_table(args.year, args.previous)
+
+    elif args.target == 'price':
+        get_historical_price()

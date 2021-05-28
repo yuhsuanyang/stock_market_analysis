@@ -23,15 +23,17 @@ def merge(df_all, col_name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--data', type=str)
     parser.add_argument('--previous', default=False)
     args = parser.parse_args()
-    print(args)
+#    print(args)
 
-    data = pickle.load(open(f'{root}/cashflow_tmp.pkl', 'rb'))
+    data = pickle.load(open(f'{root}/raw/{args.data}', 'rb'))
     for col in config.cashflow_col:
         file_name = config.cashflow_col[col]
         df = merge(data, col)
         if args.previous:
             previous_df = pd.read_csv(f'{root}/{file_name}.csv')
-            df = pd.concat([df, previous], axis=1)
+            df = df.merge(previous_df, on='company', how='right')
+        print(df.columns)
         df.to_csv(f'{root}/{file_name}.csv', index=False)
