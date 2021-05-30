@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*
 import argparse
 import pickle
 import time
@@ -47,7 +48,7 @@ def query_mops(year, data_type, stock_code=None, step=1):
 
 
 def query_dividend(stock_code):
-    url = f'https://tw.stock.yahoo.com/d/s/dividend_{stock_code}.html'
+    url = f"https://tw.stock.yahoo.com/d/s/dividend_{stock_code}.html"
     # Encode this website by Big5
     df = pd.read_html(url, encoding="Big5")[3][[0, 1, 2, 5, 6]]
     df.columns = ['year', 'distribute_date',
@@ -181,13 +182,14 @@ def get_multiple_company_tables(term, company_columns, company_column_names, com
             print(i)
             for season in range(4):
                 selected_columns = []
-                columns = [('year', 'code')]
+                columns = [('year', 'code')] + [(f"{year}_{season+1}", col_names) 
+                                               for col_names in company_column_names[i]]
                 for col in company_columns[company_type[i]]:
                     if col in data[season][i].columns:
                         selected_columns.append(col)
                         # print(col)
-                        if col != '公司代號':
-                            columns.append((f"{year}_{season+1}", col))
+                        # if col != '公司代號':
+                        #    columns.append((f"{year}_{season+1}", col))
         #        print(columns)
                 data1 = data[season][i][selected_columns]
         #        print(data1.columns)
@@ -200,7 +202,7 @@ def get_multiple_company_tables(term, company_columns, company_column_names, com
 
     for i in raw_data:
         raw_data[i].to_csv(
-            f'../data_sample/{term}/{company_type[i]}_profit_loss.csv', index=False)
+            f'../data_sample/{term}/{company_type[i]}_{term}.csv', index=False)
 
 
 if __name__ == '__main__':
@@ -220,13 +222,15 @@ if __name__ == '__main__':
         company_type = {1: 'bank', 3: 'standard',
                         4: 'holdings', 5: 'insurance', 6: 'other'}
 
-        company_columns_names = {1: ['code', '利息淨收益', '利息以外淨損益', '各項提存', '繼續營業單位稅前淨利', '營業費用', '基本每股盈餘'],
-                                 3: ['code', '營業收入', '營業利益', '營業毛利', '營業成本', '營業費用',
-                                     '營業外收入及支出', '本期淨利', '基本每股盈餘'],
-                                 4: ['code', '利息淨收益', '利息以外淨收益', '淨收益', '營業費用', '基本每股盈餘'],
-                                 5: ['code', '營業收入', '營業利益', '營業成本', '營業費用', '營業外收入及支出',
-                                     '本期淨利', '基本每股盈餘'],
-                                 6: ['code', '收入', '支出', '繼續營業單位稅前淨利', '基本每股盈餘']}
+        company_columns_names = {1: ['利息淨收益', '利息以外淨損益', '各項提存', '稅前淨利', '稅後淨利', 
+                                     '營業費用', '基本每股盈餘'],
+                                 3: ['營業收入', '營業利益', '營業毛利', '營業成本', '營業費用',
+                                     '營業外收入及支出', '稅前淨利', '稅後淨利', '基本每股盈餘'],
+                                 4: ['利息淨收益', '利息以外淨收益', '淨收益', '稅前淨利', '稅後淨利', 
+                                     '營業費用', '基本每股盈餘'],
+                                 5: ['營業收入', '營業利益', '營業成本', '營業費用', '營業外收入及支出',
+                                     '稅前淨利', '稅後淨利', '基本每股盈餘'],
+                                 6: ['收入', '支出', '稅前淨利', '稅後淨利', '基本每股盈餘']}
 
         get_multiple_company_tables(
             args.target, config.profit_loss_col, company_columns_names, company_type)
@@ -234,11 +238,11 @@ if __name__ == '__main__':
     elif args.target == 'asset_debt':
         company_type = {1: 'bank', 3: 'standard',
                         4: 'holdings', 5: 'insurance'}
-        company_column_names = {1: ['code', '資產總額', '負債總額', '權益總額', '股本', '每股參考淨值'],
-                                3: ['code', '流動資產', '非流動資產', '資產總額', '流動負債', '非流動負債',
+        company_column_names = {1: ['資產總額', '負債總額', '權益總額', '股本', '每股參考淨值'],
+                                3: ['流動資產', '非流動資產', '資產總額', '流動負債', '非流動負債',
                                     '負債總額', '權益總額', '股本', '每股參考淨值'],
-                                4: ['code', '資產總額', '負債總額', '權益總額', '股本', '每股參考淨值'],
-                                5: ['code', '資產總額', '負債總額', '權益總額', '股本', '每股參考淨值']}
+                                4: ['資產總額', '負債總額', '權益總額', '股本', '每股參考淨值'],
+                                5: ['資產總額', '負債總額', '權益總額', '股本', '每股參考淨值']}
 
         get＿multiple_company_tables(
             args.target, config.asset_debt_col, company_column_names, company_type)
