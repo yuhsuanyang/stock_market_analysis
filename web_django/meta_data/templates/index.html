@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+    <title>財報鳥</title>
+    <style>
+      .back {
+        background-image: url("{% static "background.jpeg"%}");
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
+        height: 60vh; /*是整個畫面的高度的60%*/
+        text-align: center;
+        padding-top: 0;
+      }
+      .content {
+        position: relative;
+        width: 100%; /*寬度會和back一樣*/
+        height: 70%; /*高度會是back的0.7*/
+        top: 30%; /*會從back的高度的30％開始*/
+        text-align: center;
+      }
+      .logo {
+        position: absolute;
+        width: 20%;
+        left: 40%;
+        bottom: 10%;
+      }
+      .search_bar {
+        position: absolute;
+        width: 30%; /*寬度會是content 的30%*/
+        height: 10%;
+        left: 35%;
+        bottom: 0%;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 100%;
+      }
+      .twii {
+        position: relative;
+        height: 30vh;
+        text-align: center;
+        font-weight: bold;
+      }
+      .twii_right {
+        position: absolute;
+        width: 20%;
+        height: 100%;
+        left: 50%;
+        top: 10%; 
+      }
+
+      .twii_left {
+        position: absolute;
+        width: 20%;
+        height: 100%;
+        left: 30%;
+        top: 10%;
+      }
+      #date{
+        position: absolute;
+        width: 60%;
+        left: 20%;
+        top: 10%;
+        font-size: 2vw;
+        padding-top: 5%
+      }
+      #square{
+        width: 60%;
+        margin-left: 20%;
+        background-color: lightgray;
+        font-size: 3vw;
+        padding-top: 3%;
+        padding-bottom: 3%
+      }
+    *:focus{
+        outline: none;
+    }
+    a{
+         text-decoration: none;
+    }
+      table {
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        left: 10%;
+        top: 10%;
+        font-size: 1.5vw;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="back">
+      <div class="content">
+        <img class="logo" src="{% static "logo_bird.png" %}">
+        <input
+          class="search_bar"
+          type="text"
+          id="stock_code"
+          placeholder="查詢台股代碼/公司名稱"
+          style="font-size: 1.5vw;"
+        />
+      </div>
+    </div>
+    <div class="twii">
+        <div class="twii_left">
+            <table>
+                <tr>
+                    <td style="font-size: 2vw; padding-bottom: 5%; padding-top: 1vw">{{date}}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://tw.stock.yahoo.com/" target="_blank">
+                        {% if  trend == 'green' %}
+                            <section id="square" style="background-color: lightgreen"><font color="black">大盤<br>行情</font></section></a>
+                        {% elif trend == 'red' %}
+                            <section id="square" style="background-color: pink"><font color="black">大盤<br>行情</font></section></a>
+                        {% else %}
+                    <section id="square"><font color="black">大盤<br>行情</font></section></a>
+                    </td>
+                        {% endif %}
+                </tr>
+            </table>
+        </div>
+    
+      <div class="twii_right">
+        <table>
+            <tr>
+                <td colspan=2 style="font-size: 3vw; padding-bottom: 5%"><font color="{{trend}}">{{today_close}}</font></td>
+            </tr>
+            <tr>
+                <td>昨收<br>{{yesterday_close}}</td>
+                <td>開盤<br>{{open}}</td>
+            </tr>
+            <tr>
+                <td>最高<br>{{high}}</td>
+                <td>最低<br>{{low}}</td>
+            </tr>
+         <table/>
+      </div>
+    </div>
+  </body>
+</html>

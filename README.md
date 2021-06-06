@@ -22,6 +22,10 @@ A UI to present stock data of listed market
    - [x] visualize
 6. recommandation
 7. cascade django
+   - [ ] database
+   - [ ] index
+   - [ ] view: technical price analysis
+   - [ ] view: fundamentals
 
 ### data
 
@@ -52,6 +56,7 @@ A UI to present stock data of listed market
 - 淨現金流: 營業淨現金流-投資淨現金流+籌資淨現金流
 
 3. asset debt:
+
 - 權益總額 = 資產總額 - 負債總額
 
 4. ROE (股東權益報酬）= 稅後淨利/權益總額

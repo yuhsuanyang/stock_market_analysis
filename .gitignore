@@ -1,5 +1,6 @@
 code/.ipynb_checkpoints/
 code/__pycache__/
 data_sample/
+secret.py
 .DS_Store
 
