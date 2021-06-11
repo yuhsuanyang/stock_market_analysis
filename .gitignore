@@ -1,6 +1,12 @@
 code/.ipynb_checkpoints/
 code/__pycache__/
 data_sample/
+migrations/
+img_src/
+data_date_record.txt
+db.sqlite3
 secret.py
+*.ipynb
 .DS_Store
+
 
