@@ -68,8 +68,8 @@ class PriceVisualizer(BaseVisualizer):
                                ]).reset_index(drop=True)
 
         self.whole_data[self.stock_id] = self.data
-        with open(f"{self.root}/price.pkl", 'wb') as f:
-            pickle.dump(self.whole_data, f)
+        #with open(f"{self.root}/price.pkl", 'wb') as f:
+        #    pickle.dump(self.whole_data, f)
 
     def transform_date_style(self, date):
         return date.replace('-', '/')
