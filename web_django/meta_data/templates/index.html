@@ -3,15 +3,21 @@
 <html>
   <head>
     <title>財報鳥</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+        body{
+            margin: 0;
+            min-width: 1000px;
+            min-height: 600px
+        }
       .back {
         background-image: url("{% static "background.jpeg"%}");
         background-repeat: no-repeat;
         background-size: cover;
         position: relative;
         height: 60vh; /*是整個畫面的高度的60%*/
+        min-height: 400px;
         text-align: center;
-        padding-top: 0;
       }
       .content {
         position: relative;
@@ -28,13 +34,23 @@
       }
       .search_bar {
         position: absolute;
-        width: 30%; /*寬度會是content 的30%*/
+        width: 28%; /*寬度會是content 的28%*/
         height: 10%;
         left: 35%;
         bottom: 0%;
         border-radius: 10px;
         text-align: center;
         font-size: 100%;
+      }
+      .search_button {
+        position: absolute;
+        height: 12%;
+        width: 2.5%;
+        left: 64%;
+        bottom: 0%;
+        border: none;
+        border-radius: 10px;
+        background-color: skyblue;
       }
       .twii {
         position: relative;
@@ -69,7 +85,8 @@
         width: 60%;
         margin-left: 20%;
         background-color: lightgray;
-        font-size: 3vw;
+        /*font-size: 3vw;*/
+        font-size: 180%;
         padding-top: 3%;
         padding-bottom: 3%
       }
@@ -85,29 +102,43 @@
         height: 80%;
         left: 10%;
         top: 10%;
-        font-size: 1.5vw;
+        font-size: 130%;
         text-align: center;
       }
     </style>
+                 
   </head>
   <body>
     <div class="back">
       <div class="content">
         <img class="logo" src="{% static "logo_bird.png" %}">
-        <input
-          class="search_bar"
-          type="text"
-          id="stock_code"
-          placeholder="查詢台股代碼/公司名稱"
-          style="font-size: 1.5vw;"
-        />
+        <form action={% url 'price:posted_query' %} method="POST" target="_blank">
+        <!--尋找name 為 price:posted_query 的這個url, post 給他 -->
+        <!--<form action="/analysis/" method="POST">-->
+            {% csrf_token %}
+            <input
+            class="search_bar"
+            type="text"
+            name="stock_id"
+            id="stock_code"
+            placeholder="查詢台股代碼/公司名稱"
+            list="query"
+            style="font-size: 100%;"
+            />
+            <button class="search_button" type="submit"><i class="fa fa-search"></i></button>
+            <datalist id="query">
+                {% for stock_name in stock_list %}
+                <option value="{{stock_name}}">
+                {% endfor %}
+            </datalist>
+        </form>
       </div>
     </div>
     <div class="twii">
         <div class="twii_left">
             <table>
                 <tr>
-                    <td style="font-size: 2vw; padding-bottom: 5%; padding-top: 1vw">{{date}}</td>
+                    <td style="font-size: 130%; padding-bottom: 5%; padding-top: 1vw">{{date}}</td>
                 </tr>
                 <tr>
                     <td>
@@ -117,7 +148,7 @@
                         {% elif trend == 'red' %}
                             <section id="square" style="background-color: pink"><font color="black">大盤<br>行情</font></section></a>
                         {% else %}
-                    <section id="square"><font color="black">大盤<br>行情</font></section></a>
+                            <section id="square"><font color="black">大盤<br>行情</font></section></a>
                     </td>
                         {% endif %}
                 </tr>
@@ -127,7 +158,7 @@
       <div class="twii_right">
         <table>
             <tr>
-                <td colspan=2 style="font-size: 3vw; padding-bottom: 5%"><font color="{{trend}}">{{today_close}}</font></td>
+                <td colspan=2 style="font-size: 200%; padding-bottom: 5%"><font color="{{trend}}">{{today_close}}</font></td>
             </tr>
             <tr>
                 <td>昨收<br>{{yesterday_close}}</td>
