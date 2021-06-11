@@ -60,3 +60,26 @@ A UI to present stock data of listed market
 - 權益總額 = 資產總額 - 負債總額
 
 4. ROE (股東權益報酬）= 稅後淨利/權益總額
+
+## django
+
+1 . start project: `django-admin stratproject <project name>`
+
+2. start app: `python3 manage.py startapp <app name>`
+
+3. create table in database:
+
+- in `<app name>/models.py`
+  - `class <table name>`:
+  - set class attributes as table columns
+- in `<project name>/settings.py` in `INSTALLED_APPS`, add `<app name>.apps.<table name>Config`
+- `python3 manage.py makemigrations`
+- `python3 manage.py migrate`
+
+4. check table: `sqlite3 db.sqlite3`, `.tables`
+
+5. use django's database API: `python3 manage.py shell`
+
+- interact with table: `from <app name>.models import <table name>`
+- add data: `data = <table name>(....)`, `data.save()`
+- fetch all data: `<table name>.objects.all()`, return is a query set
