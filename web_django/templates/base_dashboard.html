@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+{% load static %}
+{% load plotly_dash %}
+<html>
+  <head>
+    <title>財報鳥</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        background-color: aliceblue;
+        min-width: 800px; /*如果視窗寬度<800 就會需要scroll*/
+      }
+      .logo {
+        position: absolute;
+        height: 100%;
+        left: 10px;
+      }
+      .search_bar {
+        position: absolute;
+        width: 200px; /*寬度會是content 的20%*/
+        height: 40%;
+        left: 80px;
+        top: 30%;
+        border-color: lightgray;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 10px;
+        background-color: aliceblue;
+      }
+      .companies {
+        font-size: 10%;
+        padding: 5%;
+      }
+      #nav {
+        background-color: white;
+        position: relative;
+        height: 60px;
+      }
+      #links {
+        position: absolute;
+        height: 100%;
+        width: 500px;
+        right: 0;
+        margin: 0;
+        font-weight: bold;
+      }
+      #contents {
+        position: relative;
+        height: 700px;
+      }
+      #title {
+        position: absolute;
+        width: 90%;
+        height: 10%;
+        left: 5%;
+        top: 1%;
+        text-align: center;
+        background-color: white;
+      }
+      #basic_info {
+        position: absolute;
+        width: 40%;
+        height: 100%;
+        right: 0%;
+        top: 0%;
+      }
+      #same_trade {
+        position: absolute;
+        height: 200px;
+        width: 50%;
+        top: 20%;
+        right: 35%;
+        background-color: mintcream;
+        overflow: auto;
+        z-index: 1;
+        display: none;
+      }
+      #left_section {
+        position: absolute;
+        height: 60%;
+        width: 10%;
+        top: 13%;
+        left: 5%;
+        padding: 2%;
+        /*padding-top: 2%;*/
+        background-color: white;
+        font-size: 90%
+      }
+      #dashboard{
+          position: absolute;
+          height: 1000px;
+          width: 75%;
+          top: 13%;
+          left: 20%;
+          background-color: white;
+      }
+      ul {
+        list-style-type: none;
+      }
+      li {
+        float: left;
+        padding: 20px;
+      }
+      *:focus {
+        outline: none;
+      }
+      a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <script>
+    function show() {
+      var x = document.getElementById("same_trade");
+      console.log("clicked");
+      console.log(x.style.display);
+      if (x.style.display == "block") {
+        x.style.display = "none";
+      } else {
+        x.style.display = "block";
+      }
+    }
+    window.onfocus = function(){ window.location.reload(); }
+  </script>
+  <body>
+    <div id="nav">
+      <img class="logo" src="{% static "logo_bird.png" %}">
+      <input
+        class="search_bar"
+        type="text"
+        name="stock_id"
+        id="stock_code"
+        placeholder="查詢台股代碼/公司名稱"
+        style="font-size: 5px"
+      />
+      <ul id="links">
+        {% block link_list%}{% endblock%}  
+        <!--<li style="background-color: aliceblue">近期股價</li>
+        <li>資產負債表</li>
+        <li>現金流量表</li>
+        <li>股利政策</li>-->
+      </ul>
+    </div>
+    <div id="contents">
+      <div id="title">
+        <h2>{{stock_id}}</h2>
+        <div id="basic_info">
+          <table
+            style="
+              position: absolute;
+              right: 5%;
+              top: 10%;
+              width: 30%;
+              text-align: left;
+            "
+          >
+            <tr>
+              <td id="industry">
+                <font color="darkcyan" onclick="show()">{{industry_type}}</font>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-size: 1vw">上市日期: {{listed_date}}</td>
+            </tr>
+          </table>
+          <div id="same_trade">
+            <ul>
+                {% block same_trade %}{% endblock %}
+              <!--{#% for stock_name in same_trade%}
+              <li class="companies">{{stock_name}}</li>
+              {% endfor%#}-->
+            </ul>
+          </div>
+        </div>
+      </div>
+        {% block main_content %}{% endblock %}
+     </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends "base_dashboard.html"%} {% load plotly_dash %} {% block link_list %}
+<li style="background-color: aliceblue">近期股價</li>
+<li>資產負債表</li>
+<li>現金流量表</li>
+<li>股利政策</li>
+{% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
+<li class="companies">{{stock_name}}</li>
+{% endfor%} {% endblock %} {% block main_content %}
+<div id="left_section">
+  <p>{{today_date}} 行情</p>
+  <p>開 <font color="{{open_color}}">{{open}}</font></p>
+  <p>高 <font color="{{high_color}}">{{high}}</font></p>
+  <p>低 <font color="{{low_color}}">{{low}}</font></p>
+  <p>收 <font color="{{close_color}}">{{close}}</font></p>
+  <p>量(張) {{volume}}</p>
+  <p>昨收 {{previous_close}}</p>
+  <p>
+    漲跌
+    <font color="{{close_color}}">{{updown}}</font>
+  </p>
+  <p>
+    漲跌幅
+    <font color="{{close_color}}">{{amplitude}}%</font>
+  </p>
+</div>
+<div id="dashboard" class="{% plotly_class name='Price_Dashboard' %}">
+  {% plotly_app name='Price_Dashboard' ratio=10%}
+</div>
+{%endblock %}
