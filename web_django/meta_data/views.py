@@ -1,3 +1,4 @@
+import os
 import json
 import time
 import requests
@@ -12,21 +13,19 @@ from .models import StockMetaData
 from price.models import PriceData
 
 root = Path(__file__).resolve().parent
-#print(root)
-if datetime.now().time().hour < 14:
-    ref_date = datetime.today() - timedelta(days=2)
-else:
-    ref_date = datetime.today()
+print(root)  # ../meta_data
 
-if ref_date.isoweekday() == 6:
-    adjust = 0
-elif ref_date.isoweekday() == 7:
-    adjust = -1
-else:
-    adjust = 1
-today = ref_date + timedelta(days=adjust)
-print('ref date: ', ref_date)
+today = datetime.today() + timedelta(days=1)
+previous = today - timedelta(days=10)
 print('today: ', today)
+print('previous_datey: ', previous)
+
+with open(f"{root}/data_date_record.txt", "r") as f:
+    last_date = f.read()
+print(last_date)
+last_date = datetime.strptime(last_date.strip(), '%Y-%m-%d')
+
+print('last record date: ', last_date)
 
 
 def get_all_data():
@@ -38,11 +37,7 @@ stocks = get_all_data()
 
 
 def get_latest_data():
-    yesterday = today - timedelta(days=2)
-    #   print('ref date', datetime.strftime(ref_date, '%Y-%m-%d'))
-    #    print(today, today.isoweekday())
-    #    print(yesterday, yesterday.isoweekday())
-    start_date = datetime.strftime(yesterday, '%Y-%m-%d')
+    start_date = datetime.strftime(previous, '%Y-%m-%d')
     end_date = datetime.strftime(today, '%Y-%m-%d')
     start = int(time.mktime(time.strptime(start_date, '%Y-%m-%d')))
     end = int(time.mktime(time.strptime(end_date, '%Y-%m-%d')))
@@ -50,15 +45,20 @@ def get_latest_data():
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?period1={start}&period2={end}&interval=1d&events=history&=hP2rOschxO0"
     res = requests.get(url)
     data = json.loads(res.text)
-    data = data['chart']['result'][0]['indicators']['quote'][0]
-    #print(data)
+    timestamps = data['chart']['result'][0]['timestamp']
+    now_date = time.strftime('%Y-%m-%d', time.localtime(timestamps[-1]))
+    data = pd.DataFrame(data['chart']['result'][0]['indicators']['quote'][0])
+    data['Date'] = pd.DataFrame(timestamps)
+    print(data)
+    data = data.dropna()
+    #    print(timestamps)
     return {
-        'date': datetime.strftime(today - timedelta(days=1), '%Y-%m-%d'),
-        'yesterday_close': round(data['close'][0], 2),
-        'today_close': round(data['close'][1], 2),
-        'low': round(data['low'][1], 2),
-        'high': round(data['high'][1], 2),
-        'open': round(data['open'][1], 2)
+        'date': now_date,
+        'yesterday_close': round(data['close'].iloc[-2], 2),
+        'today_close': round(data['close'].iloc[-1], 2),
+        'low': round(data['low'].iloc[-1], 2),
+        'high': round(data['high'].iloc[-1], 2),
+        'open': round(data['open'].iloc[1], 2)
     }
 
 
@@ -101,26 +101,19 @@ def update_db(df, date):
                         Low=df.Low[i],
                         Close=df.Close[i],
                         Volume=df.Volume[i])
-        #        print(df.code[i])
 
         first_row = PriceData.objects.all().filter(
             code=int(df.code[i])).order_by("Date")[0]
-        print(first_row.__str__())
-        #print(row.code, row.Open, row.High, row.Low, row.Close, row.Volume)
+        #print(first_row.__str__())
         first_row.delete()
         row.save()
 
 
 def update_stock_price():
-    with open(f"{root}/data_date_record.txt", "r") as f:
-        last_date = f.read()
-    print(last_date)
-    last_date = datetime.strptime(last_date.strip(), '%Y-%m-%d')
-
-    print('last record date: ', last_date)
     tracking_days = (today - last_date).days - 1
 
     if tracking_days:  # table PriceData needs to be updated
+        dates = []
         for d in range(1, tracking_days + 1):
             datestr = datetime.strftime(last_date + timedelta(days=d),
                                         '%Y-%m-%d')
@@ -129,16 +122,34 @@ def update_stock_price():
             if type(one_day_data) == pd.DataFrame:
                 #   print(one_day_data)
                 update_db(one_day_data, datestr)
-
-        with open(f"{root}/data_date_record.txt", 'w') as f:
-            f.write(datestr)
+                dates.append(datestr)
+        if len(dates):
+            with open(f"{root}/data_date_record.txt", 'w') as f:
+                f.write(dates[-1])
     else:
         print('price data is already up to date')
 
 
+def query_punishment(compare_date):
+    modify_time = os.path.getmtime(f'{root}/punished.csv')
+    modify_time = time.strftime('%Y%m%d', time.localtime(modify_time))
+    if modify_time == compare_date:  #這天已經查過 不用再查了
+        return
+    end = datetime.strftime(compare_date, '%Y%m%d') + timedelta(days=1)
+    end = datetime.strptime(end, '%Y%m%d')
+
+    r = requests.post(
+        f'https://www.twse.com.tw/announcement/punish?response=json&startDate={start}&endDate={end}'
+    )
+    df = pd.DataFrame(json.loads(r.text)['data'])[[2, 6]]
+    df.columns = ['code', 'duration']
+    df.to_csv(f'{root}/punished.csv', index=False)
+
+
 def news(request):
     data = get_latest_data()
-    if datetime.now().time().hour >= 14:
+    query_punishment(data['date'].replace('-', ''))
+    if datetime.now().time().hour >= 14 or datetime.now().time().hour <= 9:
         update_stock_price()
     if data['today_close'] > data['yesterday_close']:
         trend = 'red'
