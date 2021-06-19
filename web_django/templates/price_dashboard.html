@@ -5,26 +5,57 @@
 <li>現金流量表</li>
 <li>股利政策</li>
 {% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
-<li class="companies">{{stock_name}}</li>
+<li class="companies">
+  <a href="{{stock_name.get_price_url}}" target="_blank"
+    ><font color="black">{{stock_name}}</font></a
+  >
+</li>
 {% endfor%} {% endblock %} {% block main_content %}
 <div id="left_section">
   <p>{{today_date}} 行情</p>
-  <p>開 <font color="{{open_color}}">{{open}}</font></p>
-  <p>高 <font color="{{high_color}}">{{high}}</font></p>
-  <p>低 <font color="{{low_color}}">{{low}}</font></p>
-  <p>收 <font color="{{close_color}}">{{close}}</font></p>
+  <p>
+    開
+    <mark
+      style="background-color:{{open_highlight_color}}; color:{{open_color}}"
+      >{{open}}</mark
+    >
+  </p>
+  <p>
+    高
+    <mark
+      style="background-color:{{high_highlight_color}}; color: {{high_color}}"
+      >{{high}}</mark
+    >
+  </p>
+  <p>
+    低
+    <mark style="background-color:{{low_highlight_color}}; color: {{low_color}}"
+      >{{low}}</mark
+    >
+  </p>
+  <p>
+    收
+    <mark
+      style="background-color:{{close_highlight_color}}; color: {{close_color}}"
+      >{{close}}</mark
+    >
+  </p>
   <p>量(張) {{volume}}</p>
   <p>昨收 {{previous_close}}</p>
   <p>
     漲跌
-    <font color="{{close_color}}">{{updown}}</font>
+    <font color="{{updown_color}}">{{updown}}</font>
   </p>
   <p>
     漲跌幅
-    <font color="{{close_color}}">{{amplitude}}%</font>
+    <font color="{{updown_color}}">{{amplitude}}%</font>
   </p>
+  {% if punishment_duration %}
+  <p><mark style="background-color: black; color: white"> 處置</mark></p>
+  <p>{{punishment_duration}}</p>
+  {% endif %}
 </div>
 <div id="dashboard" class="{% plotly_class name='Price_Dashboard' %}">
-  {% plotly_app name='Price_Dashboard' ratio=10%}
+  {% plotly_app name='Price_Dashboard' ratio=1.2%}
 </div>
 {%endblock %}

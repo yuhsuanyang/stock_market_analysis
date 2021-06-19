@@ -84,8 +84,8 @@
       #square{
         width: 60%;
         margin-left: 20%;
-        background-color: lightgray;
-        /*font-size: 3vw;*/
+        /*background-color: lightgray;
+        font-size: 3vw;*/
         font-size: 180%;
         padding-top: 3%;
         padding-bottom: 3%
@@ -143,14 +143,7 @@
                 <tr>
                     <td>
                         <a href="https://tw.stock.yahoo.com/" target="_blank">
-                        {% if  trend == 'green' %}
-                            <section id="square" style="background-color: lightgreen"><font color="black">大盤<br>行情</font></section></a>
-                        {% elif trend == 'red' %}
-                            <section id="square" style="background-color: pink"><font color="black">大盤<br>行情</font></section></a>
-                        {% else %}
-                            <section id="square"><font color="black">大盤<br>行情</font></section></a>
-                    </td>
-                        {% endif %}
+                            <section id="square" style="background-color: {{trend_background}}"><font color="black">大盤<br>行情</font></section></a>
                 </tr>
             </table>
         </div>

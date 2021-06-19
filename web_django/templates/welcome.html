@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% load plotly_dash %}
+<html>
+  <head>
+    <style>
+      .plotly-graph-div {
+        height: 1000px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>this is a hello world from dash.</div>
+
+    <div
+      class="{% plotly_class name='SimpleExample' %} card"
+      style="height: 100%; width: 100%"
+    >
+      {% plotly_app name='SimpleExample' ratio=0.65 %}
+    </div>
+  </body>
+</html>

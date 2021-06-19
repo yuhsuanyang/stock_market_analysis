@@ -12,7 +12,7 @@
       body {
         margin: 0;
         background-color: aliceblue;
-        min-width: 800px; /*如果視窗寬度<800 就會需要scroll*/
+        min-width: 900px; /*如果視窗寬度<800 就會需要scroll*/
       }
       .logo {
         position: absolute;
@@ -28,9 +28,16 @@
         border-color: lightgray;
         border-radius: 10px;
         text-align: center;
-        font-size: 10px;
         background-color: aliceblue;
       }
+    .icon_button{
+        position: absolute;
+        top: 35%;
+        height: 40%;
+        border: none;
+        background-color: white;
+        font-size: 20px;
+    }
       .companies {
         font-size: 10%;
         padding: 5%;
@@ -72,8 +79,11 @@
         position: absolute;
         height: 200px;
         width: 50%;
-        top: 20%;
-        right: 35%;
+        top: 45%;
+        right: 10%;
+        border-color: black;
+        border-style: solid;
+        border-width:1px;
         background-color: mintcream;
         overflow: auto;
         z-index: 1;
@@ -98,12 +108,18 @@
           left: 20%;
           background-color: white;
       }
+      #dashboard div{
+          padding-bottom: 0%;
+      }
       ul {
         list-style-type: none;
       }
       li {
         float: left;
         padding: 20px;
+      }
+      mark{
+          font-weight: bold;
       }
       *:focus {
         outline: none;
@@ -128,15 +144,27 @@
   </script>
   <body>
     <div id="nav">
-      <img class="logo" src="{% static "logo_bird.png" %}">
-      <input
+      <img class="logo" src="{% static "logo_bird.png" %}">     
+            {#%include 'search_bar.html'%#} 
+        <form action={% url 'price:posted_query' %} method="POST" target="_blank">
+        {% csrf_token %}
+        <input
         class="search_bar"
         type="text"
         name="stock_id"
         id="stock_code"
         placeholder="查詢台股代碼/公司名稱"
-        style="font-size: 5px"
-      />
+        list="query"
+        style="font-size: 15px"/>
+        <button class="icon_button" type="submit" style="left: 300px"><i class="fa fa-search"></i></button>
+    <datalist id="query">
+        {% for stock_name in stock_list %}
+        <option value="{{stock_name}}">
+        {% endfor %}
+    </datalist>
+
+      </form>
+      <a href={%url 'index'%}><button class="icon_button"  style="left: 340px"><i class="fa fa-home"></i></button></a>
       <ul id="links">
         {% block link_list%}{% endblock%}  
         <!--<li style="background-color: aliceblue">近期股價</li>
@@ -152,10 +180,10 @@
           <table
             style="
               position: absolute;
-              right: 5%;
+              right: 10%;
               top: 10%;
-              width: 30%;
-              text-align: left;
+              width: 40%;
+              text-align: right;
             "
           >
             <tr>
