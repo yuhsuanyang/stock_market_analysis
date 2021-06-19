@@ -17,7 +17,7 @@ def query_historical_price(stock_code, end_date):
     start = end - 86400 * 365 * 5
     print('stock_code:', stock_code)
     url = f"https://query1.finance.yahoo.com/v7/finance/download/{stock_code}.TW?period1={start}&period2={end}&interval=1d&events=history&crumb=DCkS0u002FOZyL"
-    print(url)
+    # print(url)
     res = requests.get(url)
     data = pd.read_csv(StringIO(res.text))[['Date', 'Open', 'Close', 'Volume']]
     data.columns = ['date', 'open', 'daily', 'volume']
@@ -126,12 +126,12 @@ def create_dash(stock_code, company_name, df):
                    name='漲'))
         fig.add_trace(
             go.Bar(x=bear.date,
-                   y=bull.volume.values.reshape(-1) / 1e3,
+                   y=bear.volume.values.reshape(-1) / 1e3,
                    marker_color='green',
                    name='跌'))
         fig.add_trace(
             go.Bar(x=tie.date,
-                   y=bull.volume.values.reshape(-1) / 1e3,
+                   y=tie.volume.values.reshape(-1) / 1e3,
                    marker_color='gray',
                    name='平'))
         fig.update_layout(title={

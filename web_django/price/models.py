@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.urls import reverse
 # Create your models here.
 
 
@@ -14,3 +14,11 @@ class PriceData(models.Model):
 
     def __str__(self):
         return f"{str(self.code)} {self.Date}"
+
+    def get_values(self):
+        return {
+            'open': self.Open,
+            'high': self.High,
+            'low': self.Low,
+            'close': self.Close
+        }

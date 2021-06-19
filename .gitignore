@@ -7,6 +7,7 @@ data_date_record.txt
 db.sqlite3
 secret.py
 *.ipynb
+*.csv
 .DS_Store
 
 
