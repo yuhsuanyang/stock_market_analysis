@@ -152,12 +152,16 @@ def news(request):
     if datetime.now().time().hour >= 14 or datetime.now().time().hour <= 9:
         update_stock_price()
     if data['today_close'] > data['yesterday_close']:
+        trend_light = 'pink'
         trend = 'red'
     elif data['today_close'] < data['yesterday_close']:
+        trend_light = 'lightgreen'
         trend = 'green'
     else:
-        trend = 'gold'
+        trend_light = 'lightgrey'
+        trend_ = 'gold'
     data['trend'] = trend
+    data['trend_background'] = trend_light
     print(data)
     #   print(stocks[0])
     data['stock_list'] = stocks
