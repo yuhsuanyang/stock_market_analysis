@@ -18,10 +18,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 from meta_data.views import news
+from meta_data.summary import get_tables
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('index/', news, name='index'),
+    path('overview/', get_tables, name='overview'),
     path('analysis/', include('price.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

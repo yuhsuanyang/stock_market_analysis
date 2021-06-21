@@ -13,12 +13,12 @@ from .models import StockMetaData
 from price.models import PriceData
 
 root = Path(__file__).resolve().parent
-print(root)  # ../meta_data
+#print(root)  # ../meta_data
 
 today = datetime.today() + timedelta(days=1)
 previous = today - timedelta(days=10)
 print('today: ', today)
-print('previous_datey: ', previous)
+print('previous_date: ', previous)
 
 with open(f"{root}/data_date_record.txt", "r") as f:
     last_date = f.read()
@@ -26,14 +26,13 @@ print(last_date)
 last_date = datetime.strptime(last_date.strip(), '%Y-%m-%d')
 
 print('last record date: ', last_date)
-
-
-def get_all_data():
-    stocks = StockMetaData.objects.all()
-    return [stocks[i].__str__() for i in range(len(stocks))]
-
-
-stocks = get_all_data()
+meta_data = StockMetaData.objects.all()
+stocks = [stock.__str__() for stock in meta_data]
+#def get_all_data():
+#    stocks = StockMetaData.objects.all()
+#    return [stocks[i].__str__() for i in range(len(stocks))]
+#
+#stocks = get_all_data()
 
 
 def get_latest_data():
@@ -126,6 +125,7 @@ def update_stock_price():
         if len(dates):
             with open(f"{root}/data_date_record.txt", 'w') as f:
                 f.write(dates[-1])
+            sum_up()  # create daily report
     else:
         print('price data is already up to date')
 
@@ -146,11 +146,42 @@ def query_punishment(compare_date):
     df.to_csv(f'{root}/punished.csv', index=False)
 
 
+def sum_up():
+    whole_data = PriceData.objects.all().order_by('-Date')
+    today = whole_data.values('Date').distinct()[0]
+    previous_day = whole_data.values('Date').distinct()[1]
+    #print(today, previous_day)
+    data = whole_data.filter(Date=today['Date'])
+    df = [[
+        row.code,
+        meta_data.filter(code=row.code)[0].name, row.Close, row.Volume
+    ] for row in data]
+    df = pd.DataFrame(df, columns=['code', 'name', 'today_close', 'volume'])
+    previous_close = []
+    for stock_code in df['code'].values:
+        row = whole_data.filter(Date=previous_day['Date']).filter(
+            code=stock_code)
+        if len(row):
+            previous_close.append([stock_code, row[0].Close])
+    df = df.merge(pd.DataFrame(previous_close,
+                               columns=['code', 'previous_close']),
+                  how='left')
+    df['volume'] = df['volume'] / 1000
+    df['updowns'] = round(df['today_close'] - df['previous_close'], 2)
+    df['fluctuation'] = round((df['today_close'] - df['previous_close']) *
+                              100 / df['previous_close'], 2)
+    df['code'] = df['code'] + ' ' + df['name']
+    del df['name']
+    print(df)
+    df.to_csv(f"{root}/daily_report.csv", index=False)
+
+
 def news(request):
     data = get_latest_data()
     query_punishment(data['date'].replace('-', ''))
     if datetime.now().time().hour >= 14 or datetime.now().time().hour <= 9:
         update_stock_price()
+
     if data['today_close'] > data['yesterday_close']:
         trend_light = 'pink'
         trend = 'red'
@@ -159,7 +190,7 @@ def news(request):
         trend = 'green'
     else:
         trend_light = 'lightgrey'
-        trend_ = 'gold'
+        trend = 'gold'
     data['trend'] = trend
     data['trend_background'] = trend_light
     print(data)
