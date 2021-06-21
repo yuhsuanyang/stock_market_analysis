@@ -44,8 +44,10 @@
       }
       #nav {
         background-color: white;
-        position: relative;
+        position: sticky;
+        top: 0;
         height: 60px;
+        z-index: 1;
       }
       #links {
         position: absolute;
@@ -132,7 +134,7 @@
   <script>
     function show() {
       var x = document.getElementById("same_trade");
-      console.log("clicked");
+      console.log(x);
       console.log(x.style.display);
       if (x.style.display == "block") {
         x.style.display = "none";
@@ -144,7 +146,7 @@
   </script>
   <body>
     <div id="nav">
-      <img class="logo" src="{% static "logo_bird.png" %}">     
+        <a href="/overview"><img class="logo" src="{% static "logo_bird.png" %}"></a>
             {#%include 'search_bar.html'%#} 
         <form action={% url 'price:posted_query' %} method="POST" target="_blank">
         {% csrf_token %}
