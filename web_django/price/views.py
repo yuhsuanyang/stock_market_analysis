@@ -1,6 +1,6 @@
+import numpy as np
 import pandas as pd
 from pathlib import Path
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -12,8 +12,8 @@ from .util import *
 root = Path(__file__).resolve().parent.parent  # ../web_django
 
 meta_data = StockMetaData.objects.all()
-price_data = PriceData.objects.all().order_by('-Date')
-today = str(price_data[0].Date).strip()
+price_data = PriceData.objects.all().order_by('-date')
+today = str(price_data[0].date).strip()
 stock_code = ''
 history = pd.DataFrame([])
 punished = pd.read_csv(f'{root}/meta_data/punished.csv')
@@ -29,7 +29,7 @@ def get_posted_query(request):
 
 
 def color(price1, price2):  #price2: 昨收
-    #return: background_color, font_color<F12>
+    #return: background_color, font_color
     if price1 > price2:
         if (price1 - price2) / price2 >= 0.095:
             return 'red', 'white'
@@ -52,17 +52,18 @@ def get_price(stock_id):
     history = query_historical_price(stock_code, today)
     #print(history.iloc[-10:])
     today_stock_price = price_data.filter(code=stock_id)[0]
-    print(today_stock_price.Date)
+    print(today_stock_price.date)
     yesterday_close = price_data.filter(
-        code=stock_id).order_by('-Date')[1].Close
+        code=stock_id).order_by('-date')[1].Close
     updown = round(today_stock_price.Close - yesterday_close, 2)
     today_price_values = today_stock_price.get_values()
     data = {
-        'today_date': today_stock_price.Date,
+        'today_date': today_stock_price.date,
         'updown': updown,
         'volume': today_stock_price.Volume / 1000,
         'previous_close': yesterday_close,
         'amplitude': round(updown * 100 / yesterday_close, 2),
+        'PE': today_stock_price.PE,
         'punishment_duration': False
     }
     #    print(punished['code'])
@@ -87,6 +88,9 @@ def get_price(stock_id):
 def welcome(request, stock_id):
     info = meta_data.filter(code=stock_id)[0]
     same_trade = meta_data.filter(industry_type=info.industry_type)
+    same_trade_price_data = price_data.filter(
+        code__in=[stock.code for stock in same_trade]).filter(date=today)
+    same_trade_PE_mean = np.mean([stock.PE for stock in same_trade_price_data])
     data = get_price(stock_id)
     app = create_dash(stock_code, info.name, history)
 
@@ -95,6 +99,7 @@ def welcome(request, stock_id):
     data['industry_type'] = info.industry_type
     data['same_trade'] = same_trade
     data['stock_list'] = meta_data
+    data['PE_mean'] = round(same_trade_PE_mean, 2)
     return render(request, 'price_dashboard.html', context=data)
 
 
