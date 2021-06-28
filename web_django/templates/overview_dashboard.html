@@ -14,11 +14,6 @@
         background-color: aliceblue;
         min-width: 900px; /*如果視窗寬度<800 就會需要scroll*/
       }
-      .logo {
-        position: absolute;
-        height: 100%;
-        left: 10px;
-      }
       .search_bar {
         position: absolute;
         width: 200px; /*寬度會是content 的20%*/
@@ -30,7 +25,7 @@
         text-align: center;
         background-color: aliceblue;
       }
-    .icon_button{
+      .icon_button{
         position: absolute;
         top: 35%;
         height: 40%;
@@ -39,9 +34,10 @@
         font-size: 20px;
     }
       .ranking_table{
-          height: 21%; 
+          height: 16%; 
           overflow:auto;
-          margin-bottom: 5%;
+          margin-bottom: 3vh;
+          font-size: 1vw;
       }
       .even{
           background-color: white
@@ -49,7 +45,12 @@
       .odd{
           background-color: aliceblue;
       }
-      #nav {
+      #logo {
+        position: absolute;
+        height: 100%;
+        left: 10px;
+      }
+     #nav {
         background-color: white;
         position: sticky;
         top: 0;
@@ -66,21 +67,24 @@
       }
       #contents {
         position: relative;
-        height: 1300px;
+        /*height: 1700px;*/
+        height: 250vh;
       }
       #dashboard {
-        position: absolute;
+        /*position: absolute;*/
         width: 90%;
         height: 98%;
+        margin-left: 5%;
+        /*margin-top: 1%;
         left: 5%;
-        top: 1%;
+        top: 1%;*/
         text-align: center;
         background-color: white;
       }
       #date_label{
           position: absolute;
-          right: 5%;
-          top: 2%;
+          right: 8%;
+          padding-top: 5vh
       }
       table{
           width: 80%; 
@@ -93,6 +97,12 @@
       li {
         float: left;
         padding: 20px;
+      }
+      h3{
+          padding-top: 5vh;
+      }
+      td, th{
+          height: 3vh;
       }
       mark{
           font-weight: bold;
@@ -126,23 +136,32 @@
         function move(this_element){
             if (this_element.id == "link1"){
                         window.scroll(0, 0);
-            }else{
+            }else if(this_element.id == "link2") {
                     window.scroll(0, 700);
+            }else{
+                    window.scroll(0, document.body.scrollHeight);
                     }
             remove_li_color();
             this_element.style.backgroundColor = 'aliceblue';
         }
+        
+        console.log(window.outerHeight);
         window.addEventListener("scroll", function get_offset(){remove_li_color();
-    if (window.scrollY < 700){
-        focused_li_id = 'link1';}else{
+        console.log(scrollY);
+        ratio = scrollY/outerHeight
+        if (ratio < 0.5){
+            focused_li_id = 'link1';
+        }else if (ratio >= 0.5 && ratio < 1){
             focused_li_id = 'link2';
-        }
+        }else{
+            focused_li_id = 'link3';
+            }
         document.getElementById(focused_li_id).style.backgroundColor = 'aliceblue';})
     </script>
   </head>
   <body>
     <div id="nav">
-        <a href="/overview"><img class="logo" src="{% static "logo_bird.png" %}"></a>     
+        <a href="/overview"><img id="logo" src="{% static "logo_bird.png" %}"></a>     
         <form action={% url 'price:posted_query' %} method="POST" target="_blank">
         {% csrf_token %}
         <input
@@ -165,7 +184,7 @@
       <ul id="links">
           <li id="link1" style="background-color: aliceblue" onclick="move(this)">漲跌排行</li>
          <li id="link2" onclick="move(this)">成交量排行</li>
-        <li>本益比排行</li>
+         <li id="link3" onclick="move(this)">本益比排行</li>
       </ul>
     </div>
     <div id="contents">
@@ -176,10 +195,12 @@
             <tr  style="background-color: aliceblue">
                 <th>排名</th>
                 <th>股名</th>
+                <th>產業類別</th>
                 <th>收盤價</th>
                 <th>漲跌</th>
                 <th>漲幅(%)</th>
                 <th>成交量(張)</th>
+                <th>本益比</th>
             </tr>
             </table>
         <div class="ranking_table">
@@ -199,10 +220,12 @@
             <tr  style="background-color: aliceblue">
                 <th>排名</th>
                 <th>股名</th>
+                <th>產業類別</th>
                 <th>收盤價</th>
                 <th>漲跌</th>
                 <th>跌幅(%)</th>
                 <th>成交量(張)</th>
+                <th>本益比</th>
             </tr>
         </table> 
         <div class="ranking_table">
@@ -222,15 +245,42 @@
             <tr  style="background-color: aliceblue">
                 <th>排名</th>
                 <th>股名</th>
+                <th>產業類別</th>
                 <th>收盤價</th>
                 <th>漲跌</th>
                 <th>漲跌幅(%)</th>
                 <th>成交量(張)</th>
+                <th>本益比</th>
             </tr>
         </table>
         <div class="ranking_table">
             <table>
                 {% for row, url_ in volume %}
+                <tr class="{% cycle 'even' 'odd' %}" onclick="window.open('{{url_}}');" onmouseover="change_color(this, 'on')"
+                        onmouseout="change_color(this, 'off')">
+                    {% for value in row %}
+                        <td>{{value}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <h3><font color="purple">本益比排行</font></h3>
+        <table style="position: sticky; top: 0;">
+            <tr  style="background-color: aliceblue">
+                <th>排名</th>
+                <th>股名</th>
+                <th>產業類別</th>
+                <th>收盤價</th>
+                <th>漲跌</th>
+                <th>跌幅(%)</th>
+                <th>成交量(張)</th>
+                <th>本益比</th>
+            </tr>
+        </table> 
+        <div class="ranking_table">
+            <table>
+                {% for row, url_ in PE %}
                 <tr class="{% cycle 'even' 'odd' %}" onclick="window.open('{{url_}}');" onmouseover="change_color(this, 'on')"
                         onmouseout="change_color(this, 'off')">
                     {% for value in row %}
