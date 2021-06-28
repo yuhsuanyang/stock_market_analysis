@@ -23,8 +23,8 @@ A UI to present stock data of listed market
 6. recommandation
 7. cascade django
    - [ ] database
-   - [ ] index
-   - [ ] view: technical price analysis
+   - [x] index
+   - [x] view: technical price analysis
    - [ ] view: fundamentals
 
 ### data
@@ -72,7 +72,7 @@ A UI to present stock data of listed market
 - in `<app name>/models.py`
   - `class <table name>`:
   - set class attributes as table columns
-- in `<project name>/settings.py` in `INSTALLED_APPS`, add `<app name>.apps.<table name>Config`
+- in `<project name>/settings.py` in `INSTALLED_APPS`, add `<app name>.apps.<app name>Config`
 - `python3 manage.py makemigrations`
 - `python3 manage.py migrate`
 
