@@ -4,6 +4,7 @@ import time
 import requests
 import numpy as np
 import pandas as pd
+import yfinance as yf
 from io import StringIO
 from pathlib import Path
 from django.shortcuts import render
@@ -20,11 +21,6 @@ previous = today - timedelta(days=10)
 print('today: ', today)
 print('previous_date: ', previous)
 
-with open(f"{root}/data_date_record.txt", "r") as f:
-    last_date = f.read()
-
-last_date = datetime.strptime(last_date.strip(), '%Y-%m-%d')
-print('last record date: ', last_date)
 meta_data = StockMetaData.objects.all()
 stocks = [stock.__str__() for stock in meta_data]
 
@@ -32,28 +28,19 @@ stocks = [stock.__str__() for stock in meta_data]
 def get_latest_data():
     start_date = datetime.strftime(previous, '%Y-%m-%d')
     end_date = datetime.strftime(today, '%Y-%m-%d')
-    start = int(time.mktime(time.strptime(start_date, '%Y-%m-%d')))
-    end = int(time.mktime(time.strptime(end_date, '%Y-%m-%d')))
 
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?period1={start}&period2={end}&interval=1d&events=history&=hP2rOschxO0"
-    res = requests.get(url)
-    data = json.loads(res.text)
-    timestamps = data['chart']['result'][0]['timestamp']
-    now_date = time.strftime('%Y-%m-%d', time.localtime(timestamps[-1]))
-    data = pd.DataFrame(data['chart']['result'][0]['indicators']['quote'][0])
-    data['Date'] = pd.DataFrame(timestamps)
+    data = yf.download("^TWII", start=start_date, end=end_date)
+    data['Date'] = data.index.astype(str)
+    data = data.reset_index(drop=True)
     print(data)
-    data = data.dropna()
-    #    print(now_date)
     return {
-        'date': now_date,
-        'yesterday_close': round(data['close'].iloc[-2], 2),
-        'today_close': round(data['close'].iloc[-1], 2),
-        'low': round(data['low'].iloc[-1], 2),
-        'high': round(data['high'].iloc[-1], 2),
-        'open': round(data['open'].iloc[1], 2)
+        'date': data['Date'].iloc[-1],
+        'yesterday_close': round(data['Close'].iloc[-2], 2),
+        'today_close': round(data['Close'].iloc[-1], 2),
+        'low': round(data['Low'].iloc[-1], 2),
+        'high': round(data['High'].iloc[-1], 2),
+        'open': round(data['Open'].iloc[1], 2)
     }
-
 
 def convert(x):
     if x == '--':
@@ -103,13 +90,18 @@ def update_db(df, date):
                         Volume=df.Volume[i],
                         PE=df.PE[i])
 
-        #print(first_row.__str__())
+        # print(first_row.__str__())
         first_row.delete()
         row.save()
 
 
-def update_stock_price():
-    tracking_days = (today - last_date).days - 1
+def update_stock_price(compare_date):
+    with open(f"{root}/data_date_record.txt", "r") as f:
+        last_date = f.read()
+
+    last_date = datetime.strptime(last_date.strip(), '%Y-%m-%d')
+    print('last record date: ', last_date)
+    tracking_days = (compare_date - last_date).days  # - 1
 
     if tracking_days:  # table PriceData needs to be updated
         dates = []
@@ -126,7 +118,7 @@ def update_stock_price():
             with open(f"{root}/data_date_record.txt", 'w') as f:
                 f.write(dates[-1])
             print('creating daily report')
-            sum_up()  # create daily report
+        sum_up()  # create daily report
     else:
         print('price data is already up to date')
 
@@ -189,7 +181,7 @@ def news(request):
     query_punishment(data['date'].replace('-', ''))
     if datetime.now().time().hour >= 14 or datetime.now().time().hour <= 9:
         print('-' * 10, 'updating stock price')
-        update_stock_price()
+        update_stock_price(datetime.strptime(data['date'], '%Y-%m-%d'))
 
     if data['today_close'] > data['yesterday_close']:
         trend_light = 'pink'

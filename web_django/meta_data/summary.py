@@ -7,15 +7,10 @@ from .models import StockMetaData
 root = Path(__file__).resolve().parent
 # print(root)  # ../meta_data
 
-df = pd.read_csv(f"{root}/daily_report.csv")
-with open(f"{root}/data_date_record.txt", "r") as f:
-    last_date = f.read()
-
 meta_data = StockMetaData.objects.all()
-df = df.dropna()
 
 
-def make_ranking(sort_key, ascending=True, filter_PE=False):
+def make_ranking(df, sort_key, ascending=True, filter_PE=False):
     if filter_PE:
         processed_df = df[df.PE > 0]
     else:
@@ -41,12 +36,18 @@ def make_ranking(sort_key, ascending=True, filter_PE=False):
 
 
 def get_tables(request):
+    df = pd.read_csv(f"{root}/daily_report.csv")
+    with open(f"{root}/data_date_record.txt", "r") as f:
+        last_date = f.read()
+
+    df = df.dropna()
+    
     context = {
         'stock_list': meta_data,
         'date': last_date,
-        'rise': make_ranking('fluctuation', False),
-        'drop': make_ranking('fluctuation'),
-        'volume': make_ranking('volume', False),
-        'PE': make_ranking('PE', filter_PE=True)
+        'rise': make_ranking(df, 'fluctuation', False),
+        'drop': make_ranking(df, 'fluctuation'),
+        'volume': make_ranking(df, 'volume', False),
+        'PE': make_ranking(df, 'PE', filter_PE=True)
     }
     return render(request, 'overview_dashboard.html', context=context)
