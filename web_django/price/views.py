@@ -95,11 +95,14 @@ def welcome(request, stock_id):
     app = create_dash(stock_code, info.name, history)
 
     data['stock_id'] = f"{stock_id} {info.name}"
+    data['stock_info'] = info
     data['listed_date'] = info.listed_date
     data['industry_type'] = info.industry_type
     data['same_trade'] = same_trade
     data['stock_list'] = meta_data
     data['PE_mean'] = round(same_trade_PE_mean, 2)
+    data['stock_info'] = info
+    #    data['profit_loss_url'] = info.get_profit_loss_url
     return render(request, 'price_dashboard.html', context=data)
 
 

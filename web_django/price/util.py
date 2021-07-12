@@ -1,6 +1,7 @@
 import time
 import pandas as pd
 import requests
+import yfinance as yf
 from io import StringIO
 from datetime import datetime
 
@@ -16,11 +17,11 @@ def query_historical_price(stock_code, end_date):
     end = int(time.mktime(time.strptime(end_date, '%Y-%m-%d'))) + 86400
     start = end - 86400 * 365 * 5
     print('stock_code:', stock_code)
-    url = f"https://query1.finance.yahoo.com/v7/finance/download/{stock_code}.TW?period1={start}&period2={end}&interval=1d&events=history&crumb=DCkS0u002FOZyL"
-    # print(url)
-    res = requests.get(url)
-    data = pd.read_csv(StringIO(
-        res.text))[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
+    start_date = time.strftime('%Y-%m-%d', time.localtime(start))
+    data = yf.download(f"{stock_code}.TW", start=start_date, end=end_date)[['Open', 'High', 'Low', 'Close', 'Volume']]
+    data['Date'] = data.index.astype(str)
+    data = data.reset_index(drop=True)
+    data = data[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
     data.columns = ['date', 'open', 'high', 'low', 'daily', 'volume']
     data['5MA'] = data.daily.rolling(5).mean()
     data['20MA'] = data.daily.rolling(20).mean()
@@ -116,7 +117,9 @@ def create_dash(stock_code, company_name, df):
                                    high=selected_data['high'],
                                    low=selected_data['low'],
                                    close=selected_data['daily'],
-                                   name="k線"))
+                                   name="k線",
+                                   increasing_line_color='red',
+                                   decreasing_line_color='green'))
 
             else:
                 fig.add_trace(
