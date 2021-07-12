@@ -63,7 +63,7 @@ A UI to present stock data of listed market
 
 ## django
 
-1 . start project: `django-admin stratproject <project name>`
+1. start project: `django-admin stratproject <project name>`
 
 2. start app: `python3 manage.py startapp <app name>`
 
