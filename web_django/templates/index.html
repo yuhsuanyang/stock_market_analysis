@@ -38,9 +38,9 @@
         list-style-type: none;
       }
       .search_bar{
-        height: 100%;
+        height: calc(100% - 4px);
         width: 100%;
-        padding: 1%;
+        padding: 0;
         border-radius: 5px;
         text-align: center;
         /*font-size: 100%;*/
@@ -117,7 +117,7 @@
       <div class="content">
           <a href="/overview"><img id="logo" src="{% static "logo_bird0.png" %}" onmouseover="gesture('smile')" onmouseout="gesture('stand')"></a>
         <ul class="search">
-            <li style="width: 88%; margin-right: 4%;"><form action={% url 'price:posted_query' %} method="POST" target="_blank">
+            <li style="width: 90%; margin-right: 2%;"><form style="height: 100%;" action={% url 'price:posted_query' %} method="POST" target="_blank">
         <!--尋找name 為 price:posted_query 的這個url, post 給他 -->
         <!--<form action="/analysis/" method="POST">-->
                 {% csrf_token %}

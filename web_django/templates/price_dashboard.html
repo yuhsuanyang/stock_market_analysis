@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-{% extends "base_dashboard.html"%} {% load plotly_dash %} {% block link_list %}
+{% extends "base_dashboard.html"%} 
+{% load plotly_dash %} 
+{% block link_list %}
 <li style="background-color: aliceblue">近期股價</li>
+<li><a href="{{stock_info.get_profit_loss_url}}">損益表</a></li>
 <li>資產負債表</li>
 <li>現金流量表</li>
 <li>股利政策</li>
@@ -11,7 +14,7 @@
   >
 </li>
 {% endfor%} {% endblock %} {% block main_content %}
-<div id="left_section">
+<div id="left_section" style="width: 10%">
   <p>{{today_date}} 行情</p>
   <p>
     開
@@ -57,7 +60,9 @@
   <p>{{punishment_duration}}</p>
   {% endif %}
 </div>
-<div id="dashboard" class="{% plotly_class name='Price_Dashboard' %}">
-  {% plotly_app name='Price_Dashboard' ratio=1.2%}
+<div id="dashboard" style="width: 75%; left: 20%">
+    <!--<div class="{#% plotly_class name='Price_Dashboard' %#}">-->
+    {% plotly_app name='Price_Dashboard' ratio=1%}
+  </div>
 </div>
 {%endblock %}
