@@ -1,0 +1,17 @@
+terms = {
+    'season': '季',
+    'business_income': '營業收入',
+    'business_interest': '營業利益',
+    'net_interest_income': '利息淨收益',
+    'net_noninterest_income': '利息外淨收益',
+    'net_income': '淨收益',
+    'net_profit_before_tax': '稅前淨利',
+    'net_profit_after_tax': '稅後淨利',
+    'non_operation_income': '營業外收入',
+    'operation_expenses': '營業費用',
+    'operation_cost': '營業成本',
+    'gross': '毛利',
+    'deposit': '各項提存',
+    'income': '收入',
+    'expenses': '支出',
+}

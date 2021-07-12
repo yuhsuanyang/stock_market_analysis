@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% extends "base_dashboard.html"%} 
+{%load static %}{% load plotly_dash %} 
+{% block link_list %}
+<li><a href="{{stock_info.get_price_url}}">近期股價<a></li>
+<li style="background-color: aliceblue">損益表</li>
+<li>資產負債表</li>
+<li>現金流量表</li>
+<li>股利政策</li>
+{% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
+<li class="companies">
+  <a href="{{stock_name.get_pofit_loss_url}}" target="_blank"
+    ><font color="black">{{stock_name}}</font></a
+  >
+</li>
+{% endfor%} {% endblock %} {% block main_content %}
+<div id="left_section" style="width: 18%">
+  <h3>指標解釋</h3>
+  <img src="{% static "profit_loss_graph.png" %}" style="width: 100%">
+  <p><strong>營業收入</strong>：公司賣出的所有商品和服務金額</p>
+  <p><strong>營業成本</strong>：製作產品時直接會花到的錢(例如材料 運費等)</p>
+  <p><strong>營業費用</strong>：製作產品時間接會花到的錢(例如員工薪資 行銷費用等)</p>
+  <p><strong>營業毛利</strong>：營業收入-營業成本</p>
+  <p><strong>營業利益</strong>：毛利-營業費用</p>
+  <p><strong>營業外收入</strong>：非由營業業務所帶來的收入或支出(例如投資活動)</p>
+  <p><strong>稅前淨利</strong>：營業利益+營業外收入</p>
+</div>
+<div id="dashboard" style="width: 67%; left: 28%;">
+    {% plotly_app name='Profit_Loss_Dashboard' ratio=1%}
+  </div>
+</div>
+{%endblock %}

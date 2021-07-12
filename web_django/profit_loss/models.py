@@ -76,10 +76,9 @@ class StandardProfitLossData(models.Model):
 
     def get_values(self):
         return {
-            'net_business_income': self.business_income,
-            'net_business_interest': self.business_interest,
-            'net_gross': self.gross,
-            'net_income': self.net_income,
+            'business_income': self.business_income,
+            'business_interest': self.business_interest,
+            'gross': self.gross,
             'operation_cost': self.operation_cost,
             'operation_expenses': self.operation_expenses,
             'non_operation_income': self.non_operation_income,
