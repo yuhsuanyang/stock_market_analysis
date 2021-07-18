@@ -37,6 +37,7 @@ def create_dash(df):
         'text': '每股盈餘'
     },
                                 yaxis_title='$NTD')
+    eps_line_plot.update_xaxes(tickangle=90)
     div_children = [
         html.H3(children='近年損益表', style={'text-align': 'center'}),
         dcc.Checklist(id='checkbox',
@@ -97,6 +98,7 @@ def create_dash(df):
             'text': '利潤比率'
         },
                                            yaxis_title='%')
+        percentage_line_plot.update_xaxes(tickangle=45)
         div_children += [
             dcc.Graph(figure=percentage_line_plot,
                       style={
@@ -150,4 +152,6 @@ def create_dash(df):
             'yanchor': 'top'
         },
                           yaxis_title='$NTD 萬')
+
+        fig.update_xaxes(tickangle=45)
         return fig
