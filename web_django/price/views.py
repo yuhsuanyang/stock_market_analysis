@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -48,8 +49,10 @@ def get_price(stock_id):
     global stock_code
     global history
     stock_code = stock_id
+    end_date = datetime.strptime(today, '%Y-%m-%d') + timedelta(days=1)
+    end_date = datetime.strftime(end_date, '%Y-%m-%d')
     #print(stock_code)
-    history = query_historical_price(stock_code, today)
+    history = query_historical_price(stock_code, end_date)
     #print(history.iloc[-10:])
     today_stock_price = price_data.filter(code=stock_id)[0]
     print(today_stock_price.date)
