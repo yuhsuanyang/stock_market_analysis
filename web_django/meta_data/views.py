@@ -42,6 +42,7 @@ def get_latest_data():
         'open': round(data['Open'].iloc[1], 2)
     }
 
+
 def convert(x):
     if x == '--':
         return np.nan
@@ -76,10 +77,6 @@ def update_db(df, date):
     for i in range(len(df)):
         first_row = PriceData.objects.all().filter(
             code=int(df.code[i])).order_by("date")[0]
-        #        last_row = PriceData.objects.all().filter(
-        #            code=int(df.code[i])).order_by("-date")[0]
-        #        if date == last_row.date:
-        #            continue
         row = PriceData(code=int(df.code[i]),
                         date=date,
                         key=f"{int(df.code[i])} {date}",
@@ -111,7 +108,7 @@ def update_stock_price(compare_date):
             # download data and cleaning
             one_day_data = download_stock_price(datestr.replace('-', ''))
             if type(one_day_data) == pd.DataFrame:
-                print('updating db')
+                print('updating db', datestr)
                 update_db(one_day_data, datestr)
                 dates.append(datestr)
         if len(dates):

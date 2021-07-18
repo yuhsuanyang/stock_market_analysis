@@ -1,4 +1,3 @@
-import pandas as pd
 from django.urls import reverse
 from django.shortcuts import render, redirect
 
@@ -9,7 +8,6 @@ from .util import create_dash
 # Create your views here.
 
 meta_data = StockMetaData.objects.all()
-stock_code = ''
 table_dict = {
     'holdings': HoldingsProfitLossData,
     'bank': BankProfitLossData,
