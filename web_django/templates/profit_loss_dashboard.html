@@ -5,7 +5,7 @@
 <li><a href="{{stock_info.get_price_url}}">近期股價<a></li>
 <li style="background-color: aliceblue">損益表</li>
 <li>資產負債表</li>
-<li>現金流量表</li>
+<li><a href="{{stock_info.get_cashflow_url}}">現金流量表</a></li>
 <li>股利政策</li>
 {% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
 <li class="companies">
@@ -24,6 +24,12 @@
   <p><strong>營業利益</strong>：毛利-營業費用</p>
   <p><strong>營業外收入</strong>：非由營業業務所帶來的收入或支出(例如投資活動)</p>
   <p><strong>稅前淨利</strong>：營業利益+營業外收入</p>
+  <p><strong>稅後淨利</strong>：稅前淨利扣掉稅之後的剩下來的淨利 反映的是公司最後賺多少錢 股東能夠得到多少分紅 取決於稅後淨利</p>
+  <p><strong>毛利率</strong>: 表示公司的產品與同業相較之下的競爭力 毛利率越高 可能是產品單價高 或是產品成本低（不同市場的毛利率差異大 要和同業比較才有意義）
+  <p><strong>營業利益率</strong>: 反映經營階層的決策和管理能力 若營業利益率和毛利率差不多 表示管理能力不錯 沒有讓營業費用吃掉毛利
+  <p><strong>淨利率</strong>: 反映包含業外損益在內的整體盈餘品質 如果業外損益比例過高 需了解來源為何
+  <p><strong>每股盈餘</strong>: 稅後淨利／發行的股票數量 反映的是公司的賺錢能力
+
 </div>
 <div id="dashboard" style="width: 67%; left: 28%;">
     {% plotly_app name='Profit_Loss_Dashboard' ratio=1%}

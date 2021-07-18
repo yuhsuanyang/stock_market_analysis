@@ -1,16 +1,15 @@
 import dash_table
 import pandas as pd
-from .terms import terms
 
 
 def create_df(model_table):
-    # create dataframe from django model table
+    # create dataframe from django model table (QuerySet)
     df = {'year': [], 'season': []}
-    for col in model_table[0].get_values():
+    for col in model_table[0].get_values():  # initialize columns
         df[col] = []
 
     for row in model_table:
-        df['year'].append(row.season[0:3])
+        df['year'].append(row.season[0:3])  # season=yyy_q
         df['season'].append(row.season[-1])
         row_values = row.get_values()
         for col in row_values:
@@ -29,7 +28,7 @@ def transform_by_season(df):
         one_year_data = df[df.year == year]
         if len(df[df.year == year]) > 1:
             one_year_diff = one_year_data[cols].diff(periods=1)
-            one_year_data.iloc[1:3][cols] = one_year_diff.iloc[1:3][cols]
+            one_year_data.iloc[1:4][cols] = one_year_diff.iloc[1:4][cols]
         df_each_year.append(one_year_data)
     processed_df = pd.concat(df_each_year, ignore_index=True)
     processed_df['season'] = processed_df['year'].astype(int).astype(
@@ -48,7 +47,8 @@ def plot_table(df):
                                      'whiteSpace': 'normal',
                                      'height': 'auto',
                                      'text-align': 'left',
-                                     'color': 'darkslategrey'
+                                     'color': 'darkslategrey',
+                                     'minWidth': '50px'
                                  },
                                  style_header={
                                      'fontWeight': 'bold',

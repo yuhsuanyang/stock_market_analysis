@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% extends "base_dashboard.html"%} 
+{%load static %}{% load plotly_dash %} 
+{% block link_list %}
+<li><a href="{{stock_info.get_price_url}}">近期股價<a></li>
+<li><a href="{{stock_info.get_profit_loss_url}}">損益表</a></li>
+<li>資產負債表</li>
+<li style="background-color: aliceblue">現金流量表</li>
+<li>股利政策</li>
+{% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
+<li class="companies">
+  <a href="{{stock_name.get_cashflow_url}}" target="_blank"
+    ><font color="black">{{stock_name}}</font></a
+  >
+</li>
+{% endfor%} {% endblock %} {% block main_content %}
+<div id="left_section" style="width: 18%">
+  <h3>指標解釋</h3>
+  <img src="{% static "cashflow_graph.png" %}" style="width: 100%">
+  <p><strong>營運現金流</strong>：公司透過營業活動所產生出的現金流</p>
+  <p><strong>營運淨現金流</strong>：營運現金流加上利息 扣除所得稅後的金額</p>
+  <p><strong>資本支出</strong>：取得不動產 廠房 設備等的支出</p>
+  <p><strong>投資現金流</strong>：公司因為投資活動而產生的現金流（例如買賣債券 貸款等）</p>
+  <p><strong>籌資現金流</strong>：與投資人相關活動而產生的現金流（例如支付股利 向股東募資 向債權人借款等）</p>
+  <p><strong>淨現金流</strong>：公司的總現金流 包括來自營業 投資 融資活動的現金流</p>
+  <p><strong>自由現金流</strong>：公司在不影響營運下可以自由使用的現金餘額 是衡量盈利能力的指標 若是自由現金流量長年小於0 代表營運賺回的資金不足以支應投資需求</p>
+</div>
+<div id="dashboard" style="width: 67%; left: 28%;">
+    {% plotly_app name='Cashflow_Dashboard' ratio=1%}
+  </div>
+  </div>
+{%endblock %}
