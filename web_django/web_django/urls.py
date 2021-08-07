@@ -28,4 +28,5 @@ urlpatterns = [
     path('analysis/', include('price.urls')),
     path('analysis/', include('profit_loss.urls')),
     path('analysis/', include('cashflow.urls')),
+    path('analysis/', include('asset_debt.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

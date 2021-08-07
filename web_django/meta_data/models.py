@@ -14,11 +14,14 @@ class StockMetaData(models.Model):
     def __str__(self):
         return f"{self.code} {self.name}"
 
+    def get_asset_debt_url(self):
+        return reverse('asset_debt:dashboard', args=[self.code])
+
+    def get_cashflow_url(self):
+        return reverse('cashflow:dashboard', args=[self.code])
+
     def get_price_url(self):
         return reverse('price:dashboard', args=[self.code])
 
     def get_profit_loss_url(self):
         return reverse('profit_loss:dashboard', args=[self.code])
-    
-    def get_cashflow_url(self):
-        return reverse('cashflow:dashboard', args=[self.code])

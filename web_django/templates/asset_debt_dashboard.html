@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% extends "base_dashboard.html"%} 
+{%load static %}{% load plotly_dash %} 
+{% block link_list %}
+<li><a href="{{stock_info.get_price_url}}">近期股價</a></li>
+<li><a href="{{stock_info.get_cashflow_url}}">損益表</a></li>
+<li style="background-color: aliceblue">資產負債表</li>
+<li><a href="{{stock_info.get_cashflow_url}}">現金流量表</a></li>
+<li>股利政策</li>
+{% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
+<li class="companies">
+  <a href="{{stock_name.get_asset_debt_url}}" target="_blank"
+    ><font color="black">{{stock_name}}</font></a
+  >
+</li>
+{% endfor%} {% endblock %} {% block main_content %}
+<div id="left_section" style="width: 18%">
+  <h3>指標解釋</h3>
+  <img src="{% static "asset_debt_graph.png" %}" style="width: 100%">
+  <p><strong>流動資產</strong>：公司在一個營業週期可以變現 出售或消耗的資產 例如現金或銀行存款 短期投資等</p>
+  <p><strong>非流動資產</strong>：預期長期持有或變現速度較慢的資產 例如子公司 土地 廠房 設備 無形資產(專利 版權)</p>
+  <p><strong>流動負債</strong>：一年內到期的負債 例如短期銀行借款 應付股利 應付工資 應付帳款等</p>
+  <p><strong>非流動負債</strong>：一年後才會到期的負債 例如公司債 銀行貸款等</p>
+  <p><strong>權益總額</strong>：資產總額 - 負債總額 又稱股東權益</p>
+  <p><strong>股本</strong>：指股票投資人用現金購買到的公司股東權益</p>
+  <p><strong>每股參考淨值</strong>：每一股股票所代表的公司價值 當股價低於每股參考淨值 表示股價較便宜 反之則表示股價較高</p>
+
+</div>
+<div id="dashboard" style="width: 67%; left: 28%;">
+    {% plotly_app name='Asset_Debt_Dashboard' ratio=1%}
+  </div>
+</div>
+{%endblock %}
