@@ -26,6 +26,7 @@ A UI to present stock data of listed market
    - [x] index
    - [x] view: technical price analysis
    - [ ] view: fundamentals
+   - [ ] similarity
 
 ### data
 

@@ -34,7 +34,7 @@
         font-size: 20px;
     }
       .ranking_table{
-          height: 16%; 
+          height: 12%; 
           overflow:auto;
           margin-bottom: 3vh;
           font-size: 1vw;
@@ -54,7 +54,7 @@
         background-color: white;
         position: sticky;
         top: 0;
-        height: 60px;
+        height: 65px;
         z-index: 1;
       }
       #links {
@@ -69,7 +69,7 @@
       #contents {
         position: relative;
         /*height: 1700px;*/
-        height: 250vh;
+        height: 300vh;
       }
       #dashboard {
         /*position: absolute;*/
@@ -138,7 +138,7 @@
             if (this_element.id == "link1"){
                         window.scroll(0, 0);
             }else if(this_element.id == "link2") {
-                    window.scroll(0, 700);
+                    window.scroll(0, 1000);
             }else{
                     window.scroll(0, document.body.scrollHeight);
                     }
@@ -150,9 +150,9 @@
         window.addEventListener("scroll", function get_offset(){remove_li_color();
         console.log(scrollY);
         ratio = scrollY/outerHeight
-        if (ratio < 0.5){
+        if (ratio < 1){
             focused_li_id = 'link1';
-        }else if (ratio >= 0.5 && ratio < 1){
+        }else if (ratio >= 1 && ratio < 1.5){
             focused_li_id = 'link2';
         }else{
             focused_li_id = 'link3';
@@ -241,7 +241,29 @@
                 {% endfor %}
             </table>
         </div>
-        <h3 id="volume"><font color="orange">成交量排行</font></h3>
+        <h3 id="volume"><font color="saddlebrown">類股漲跌排行</font></h3>
+        <table style="position: sticky; top: 0;">
+            <tr  style="background-color: aliceblue">
+                <th>排名</th>
+                <th>產業類別</th>
+                <th>漲跌幅(%)</th>
+                <th>成交量(張)</th>
+                <th>上漲數量比例(%)</th>
+                <th>下跌數量比例(%)</th>
+            </tr>
+        </table>
+        <div class="ranking_table">
+            <table>
+                {% for row in  industry %}
+                <tr class="{% cycle 'even' 'odd' %}">
+                    {% for value in row %}
+                        <td>{{value}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+       <h3 id="volume"><font color="orange">成交量排行</font></h3>
         <table style="position: sticky; top: 0;">
             <tr  style="background-color: aliceblue">
                 <th>排名</th>
