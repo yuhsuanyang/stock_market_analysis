@@ -22,10 +22,10 @@ A UI to present stock data of listed market
    - [x] visualize
 6. recommandation
 7. cascade django
-   - [ ] database
+   - [x] database
    - [x] index
    - [x] view: technical price analysis
-   - [ ] view: fundamentals
+   - [x] view: fundamentals
    - [ ] similarity
 
 ### data

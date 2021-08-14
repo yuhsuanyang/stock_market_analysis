@@ -44,6 +44,7 @@ def create_dash(df):
     one_line_plot.update_layout(showlegend=False)
 
     div_children = [
+        html.H3(children='近年資產負債表', style={'text_align': 'center'}),
         dcc.Checklist(id='checkbox',
                       options=[{
                           'label': df1.columns[i],
@@ -108,7 +109,7 @@ def create_dash(df):
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
-            'text': '近年資產負債表'
         },
                           yaxis_title='$NTD 萬')
+        fig.update_xaxes(tickangle=45)
         return fig
