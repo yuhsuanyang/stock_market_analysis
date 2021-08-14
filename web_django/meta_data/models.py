@@ -25,3 +25,6 @@ class StockMetaData(models.Model):
 
     def get_profit_loss_url(self):
         return reverse('profit_loss:dashboard', args=[self.code])
+
+    def get_dividend_url(self):
+        return reverse('dividend:dashboard', args=[self.code])

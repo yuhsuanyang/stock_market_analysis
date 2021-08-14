@@ -38,11 +38,13 @@ def transform_by_season(df):
 
 
 def plot_table(df):
+    df1 = df.copy()
+    df1 = df1.iloc[::-1].reset_index(drop=True)
     table = dash_table.DataTable(columns=[{
         'id': col,
         'name': col
-    } for col in df.columns],
-                                 data=df.to_dict('records'),
+    } for col in df1.columns],
+                                 data=df1.to_dict('records'),
                                  style_cell={
                                      'whiteSpace': 'normal',
                                      'height': 'auto',

@@ -6,7 +6,7 @@
 <li><a href="{{stock_info.get_cashflow_url}}">損益表</a></li>
 <li style="background-color: aliceblue">資產負債表</li>
 <li><a href="{{stock_info.get_cashflow_url}}">現金流量表</a></li>
-<li>股利政策</li>
+<li><a href="{{stock_info.get_dividend_url}}">股利政策</a></li>
 {% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
 <li class="companies">
   <a href="{{stock_name.get_asset_debt_url}}" target="_blank"

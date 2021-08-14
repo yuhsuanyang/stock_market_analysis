@@ -1,6 +1,7 @@
 terms = {
     'business_income': '營業收入',
     'business_interest': '營業利益',
+    'cash_dividend': '現金股利',
     'cash_from_operation': '營運現金流',
     'cash_from_operation_activities': '營運淨現金流',
     'cash_from_investment': '投資淨現金流',
@@ -8,6 +9,7 @@ terms = {
     'current_assets': '流動資產',
     'current_debt': '流動負債',
     'deposits': '各項提存',
+    'distribution_date': '發放日期',
     'expenses': '支出',
     'free_cashflow': '自由現金流',
     'gross': '毛利',
@@ -28,5 +30,7 @@ terms = {
     'total_debt': '負債總額',
     'total_equity': '權益總額',
     'season': '季',
-    'share_capital': '股本'
+    'share_capital': '股本',
+    'stock_dividend': '股票股利',
+    'year': '年'
 }

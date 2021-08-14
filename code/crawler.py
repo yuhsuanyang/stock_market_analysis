@@ -49,25 +49,38 @@ def query_mops(year, data_type, stock_code=None, step=1):
 
 def query_dividend(stock_code):
     url = f"https://tw.stock.yahoo.com/d/s/dividend_{stock_code}.html"
+    season_dict = {'第一季': 1, '第二季': 2, '第三季': 3, '第四季': 4,
+                  '上半': 1.5, '下半': 2.5}
     # Encode this website by Big5
-    df = pd.read_html(url, encoding="Big5")[3][[0, 1, 2, 5, 6]]
+    df = pd.read_html(url, encoding="cp950")[3][[0, 1, 2, 5, 6]]
     df.columns = ['year', 'distribute_date',
                   'cash_dividend', 'stock_dividend', 'total']
     df = df.drop(0)
     df = df[df.distribute_date != '-'].reset_index(drop=True)
-    year = [y.split('年')[0] for y in df.year]
-    df.year = pd.DataFrame(year)
+    # year = [y.split('年')[0] for y in df.year]
+    # df.year = pd.DataFrame(year)
     processed_data = []
+    
+    for i in range(len(df)):
+        year = df.iloc[i].year.split('年')
+        #print(year)
+        if len(year[1]) > 1:
+            season = season_dict[year[1]]
+        else:
+            season = 0
+            
+        processed_data.append([int(year[0]),
+                               season,
+                               df.iloc[i].distribute_date,
+                               df.iloc[i].cash_dividend,
+                               df.iloc[i].stock_dividend,
+                               df.iloc[i].total,
+                               ])
 
-    for year in df.year.unique():
-        rows = df[df.year == year]
-        processed_data.append([year,
-                               ' / '.join(rows.distribute_date.tolist()),
-                               rows.cash_dividend.astype(float).sum(),
-                               rows.stock_dividend.astype(float).sum(),
-                               rows.total.astype(float).sum(), ])
+   
 
-    df = pd.DataFrame(processed_data, columns=df.columns)
+    df = pd.DataFrame(processed_data, columns=['year', 'season', 'distribute_date',
+                  'cash_dividend', 'stock_dividend', 'total'])
     return df
 
 
@@ -244,7 +257,7 @@ if __name__ == '__main__':
                                 4: ['資產總額', '負債總額', '權益總額', '股本', '每股參考淨值'],
                                 5: ['資產總額', '負債總額', '權益總額', '股本', '每股參考淨值']}
 
-        get＿multiple_company_tables(
+        get_multiple_company_tables(
             args.target, config.asset_debt_col, company_column_names, company_type)
 
     elif args.target == 'dividend':
@@ -256,7 +269,7 @@ if __name__ == '__main__':
                 result[stock_code] = d
             except:
                 print(stock_code, 'fail')
-        save('dividend', result)
+        save('dividend.pkl', result)
 
     elif args.target == 'cashflow':
         get_cashflow_table(args.year, args.previous)

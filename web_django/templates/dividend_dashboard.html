@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% extends "base_dashboard.html"%} 
+{%load static %}{% load plotly_dash %} 
+{% block link_list %}
+<li><a href="{{stock_info.get_price_url}}">近期股價</a></li>
+<li><a href="{{stock_info.get_cashflow_url}}">損益表</a></li>
+<li><a href="{{stock_info.get_asset_debt_url}}">資產負債表</li>
+<li><a href="{{stock_info.get_cashflow_url}}">現金流量表</a></li>
+<li style="background-color: aliceblue">股利政策</li>
+{% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
+<li class="companies">
+  <a href="{{stock_name.get_asset_debt_url}}" target="_blank"
+    ><font color="black">{{stock_name}}</font></a
+  >
+</li>
+{% endfor%} {% endblock %} {% block main_content %}
+<div id="left_section" style="width: 18%">
+  <h3>指標解釋</h3>
+  <p><strong>股利</strong>：公司從收益中派發給股東的那一部分 只會派發給在除息日之前一日持有股票至除息日當日的人士 在除息日當日或以後才買入股票的人則不能獲派股利 與此同時 證券交易所會在除息日開市前自動把股票的前一交易日收盤價扣減股利後的價值 定為該股票的開盤交易日的開盤價 因此股價會在除息日開盤時自動下跌</p>
+  <p><strong>現金股利</strong>：公司向股東支付現金 又稱配息 對股東而言是即時的資本報酬</p>
+  <p><strong>股票股利</strong>：公司向股東贈送股份 又稱配股 對於優質股 股票股利給予股東長遠獲取更大回報的機會股東期望股份價值上升及繼續以股代息，利用複息效應把錢愈滾愈大 但對於經營不佳的公司，股票股利只是零成本印股票派息</p>
+
+</div>
+<div id="dashboard" style="width: 67%; left: 28%;">
+    {% plotly_app name='Dividend_Dashboard' ratio=1%}
+  </div>
+</div>
+{%endblock %}

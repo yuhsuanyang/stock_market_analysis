@@ -29,4 +29,5 @@ urlpatterns = [
     path('analysis/', include('profit_loss.urls')),
     path('analysis/', include('cashflow.urls')),
     path('analysis/', include('asset_debt.urls')),
+    path('analysis/', include('dividend.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
