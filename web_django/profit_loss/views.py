@@ -27,14 +27,14 @@ def get_raw_data(stock_id, company_type):
     return create_df(table)
 
 
-def welcome(request, stock_id):
+def main(request, stock_id):
     info = meta_data.filter(code=stock_id)[0]
     same_trade = meta_data.filter(industry_type=info.industry_type)
     df = get_raw_data(stock_id, info.company_type).astype(float)
-#    print('------ before ------')
-#    print(df)
+    #    print('------ before ------')
+    #    print(df)
     df = transform_by_season(df)
-#    print('------ after ------')
+    #    print('------ after ------')
     print(df)
     app = create_dash(df)
     data = {}

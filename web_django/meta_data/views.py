@@ -1,19 +1,14 @@
-import os
-import json
-import time
-import requests
-import numpy as np
 import pandas as pd
 import yfinance as yf
-from io import StringIO
-from pathlib import Path
 from django.shortcuts import render
 from datetime import datetime, timedelta
 
-from .models import StockMetaData
+# from .models import StockMetaData
 from price.models import PriceData
 
-root = Path(__file__).resolve().parent
+from .util import ROOT, meta_data, download_stock_price, download_institutional_investor, download_punishment
+
+# root = Path(__file__).resolve().parent
 # print(root)  # ../meta_data
 print('-' * 20)
 today = datetime.today() + timedelta(days=1)
@@ -21,11 +16,11 @@ previous = today - timedelta(days=10)
 print('today: ', today)
 print('previous_date: ', previous)
 
-meta_data = StockMetaData.objects.all()
+# meta_data = StockMetaData.objects.all()
 stocks = [stock.__str__() for stock in meta_data]
 
 
-def get_latest_data():
+def get_latest_data():  # 即時爬取大資料
     start_date = datetime.strftime(previous, '%Y-%m-%d')
     end_date = datetime.strftime(today, '%Y-%m-%d')
 
@@ -43,37 +38,8 @@ def get_latest_data():
     }
 
 
-def convert(x):
-    if x == '--':
-        return np.nan
-    if type(x) == str:
-        return float(x.replace(',', ''))
-    else:
-        return x
-
-
-def download_stock_price(datestr):
-    r = requests.post(
-        'https://www.twse.com.tw/exchangeReport/MI_INDEX?response=csv&date=' +
-        datestr + '&type=ALL')
-    if len(r.text):
-        df = pd.read_csv(StringIO(r.text.replace("=", "")),
-                         header=["證券代號" in l
-                                 for l in r.text.split("\n")].index(True) - 1)
-        df = df[['證券代號', '開盤價', '最高價', '最低價', '收盤價', '成交股數', '本益比']]
-        df.columns = ['code', 'Open', 'High', 'Low', 'Close', 'Volume', 'PE']
-        stock_codes = [c.split(' ')[0] for c in stocks]
-        df = df[df['code'].isin(stock_codes)].reset_index(drop=True)
-        converted_df = {}
-        for col in df.columns:
-            converted_df[col] = df[col].apply(convert)
-        return pd.DataFrame(converted_df).dropna().reset_index(drop=True)
-    else:
-        print(datestr, 'no data')
-        return
-
-
-def update_db(df, date):
+def update_price_table(df, date):
+    # 更新股價db
     for i in range(len(df)):
         first_row = PriceData.objects.all().filter(
             code=int(df.code[i])).order_by("date")[0]
@@ -93,7 +59,8 @@ def update_db(df, date):
 
 
 def update_stock_price(compare_date):
-    with open(f"{root}/data_date_record.txt", "r") as f:
+    # 下載股價資料+更新db
+    with open(f"{ROOT}/data_date_record.txt", "r") as f:
         last_date = f.read()
 
     last_date = datetime.strptime(last_date.strip(), '%Y-%m-%d')
@@ -109,10 +76,10 @@ def update_stock_price(compare_date):
             one_day_data = download_stock_price(datestr.replace('-', ''))
             if type(one_day_data) == pd.DataFrame:
                 print('updating db', datestr)
-                update_db(one_day_data, datestr)
+                update_price_table(one_day_data, datestr)
                 dates.append(datestr)
         if len(dates):
-            with open(f"{root}/data_date_record.txt", 'w') as f:
+            with open(f"{ROOT}/data_date_record.txt", 'w') as f:
                 f.write(dates[-1])
             print('creating daily report')
         sum_up()  # create daily report
@@ -120,23 +87,8 @@ def update_stock_price(compare_date):
         print('price data is already up to date')
 
 
-def query_punishment(compare_date):
-    modify_time = os.path.getmtime(f'{root}/punished.csv')
-    modify_time = time.strftime('%Y%m%d', time.localtime(modify_time))
-    if modify_time == compare_date:  #這天已經查過 不用再查了
-        return
-    end = datetime.strptime(compare_date, '%Y%m%d') + timedelta(days=1)
-    end = datetime.strftime(end, '%Y%m%d')
-
-    r = requests.post(
-        f'https://www.twse.com.tw/announcement/punish?response=json&startDate={modify_time}&endDate={end}'
-    )
-    df = pd.DataFrame(json.loads(r.text)['data'])[[2, 6]]
-    df.columns = ['code', 'duration']
-    df.to_csv(f'{root}/punished.csv', index=False)
-
-
 def sum_up():
+    # 製作每日報告
     whole_data = PriceData.objects.all().order_by('-date')
     today = whole_data.values('date').distinct()[0]
     previous_day = whole_data.values('date').distinct()[1]
@@ -168,17 +120,20 @@ def sum_up():
                               100 / df['previous_close'], 2)
     df['code'] = df['code'] + ' ' + df['name']
     del df['name']
-    #print(df)
-    df.to_csv(f"{root}/daily_report.csv", index=False)
+    # print(df)
+    df.to_csv(f"{ROOT}/daily_report.csv", index=False)
 
 
-def news(request):
+def main(request):
     print('-' * 10, 'downloading latest data')
     data = get_latest_data()
-    query_punishment(data['date'].replace('-', ''))
-    if datetime.now().time().hour >= 14 or datetime.now().time().hour <= 9:
+    download_punishment(data['date'].replace('-', ''))
+    if datetime.now().time().hour >= 14 or datetime.now().time(
+    ).hour <= 9:  # 每天兩點以後更新股價
         print('-' * 10, 'updating stock price')
         update_stock_price(datetime.strptime(data['date'], '%Y-%m-%d'))
+
+    # TODO: 每天五點以後更新三大法人
 
     if data['today_close'] > data['yesterday_close']:
         trend_light = 'pink'

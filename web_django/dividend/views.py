@@ -1,7 +1,6 @@
 import pandas as pd
 from django.shortcuts import render, redirect
 from django.urls import reverse
-#from dashboard_utils.common_functions import create_df
 from .models import DividendData
 from meta_data.models import StockMetaData
 from .util import create_dash
@@ -40,7 +39,7 @@ def get_raw_data(stock_id):
     return create_df(table)
 
 
-def welcome(request, stock_id):
+def main(request, stock_id):
     info = meta_data.filter(code=stock_id)[0]
     same_trade = meta_data.filter(industry_type=info.industry_type)
     df = get_raw_data(stock_id)
