@@ -1,4 +1,5 @@
 from django.db import models
+from dashboard_utils.terms import terms
 
 
 # Create your models here.
@@ -13,6 +14,17 @@ class CashflowData(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.season}"
+
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in [
+                'code', 'season', 'cash_from_operation',
+                'cash_from_operation_activities', 'real_estate',
+                'cash_from_investment', 'cash_from_fundraise'
+        ]:
+            col_dict[col] = terms[col]
+        return col_dict
 
     def get_values(self):
         return {

@@ -1,4 +1,5 @@
 from django.db import models
+from dashboard_utils.terms import terms
 
 # Create your models here.
 
@@ -13,6 +14,16 @@ class DividendData(models.Model):
 
     def __str__(self):
         return f"{str(self.code)} {self.year} {self.season}"
+
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in ['code', 'year', 'season']:
+            col_dict[col] = terms[col]
+        col_dict['date'] = '股利發放日期'
+        col_dict['cash'] = '現金股利'
+        col_dict['stock'] = '股票股利'
+        return col_dict
 
     def get_values(self):
         return {

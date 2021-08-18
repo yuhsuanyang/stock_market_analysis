@@ -1,5 +1,5 @@
 from django.db import models
-
+from dashboard_utils.terms import terms
 # Create your models here.
 
 
@@ -14,6 +14,17 @@ class NonStandardAssetDebtData(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.season}"
+
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in [
+                'code', 'season', 'total_assets', 'total_equity',
+                'share_capital'
+        ]:
+            col_dict[col] = terms[col]
+        col_dict['PBR'] = '每股參考淨值'
+        return col_dict
 
     def get_values(self):
         return {
@@ -41,6 +52,18 @@ class StandardAssetDebtData(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.season}"
+
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in [
+                'code', 'season', 'current_assets', 'noncurrent_assets',
+                'total_assets', 'current_debt', 'noncurrent_debt',
+                'total_debt', 'total_equity', 'share_capital'
+        ]:
+            col_dict[col] = terms[col]
+        col_dict['PBR'] = '每股參考淨值'
+        return col_dict
 
     def get_values(self):
         return {

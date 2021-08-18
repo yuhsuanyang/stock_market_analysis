@@ -1,5 +1,5 @@
 from django.db import models
-
+from dashboard_utils.terms import terms
 # Create your models here.
 
 
@@ -17,6 +17,19 @@ class HoldingsProfitLossData(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.season}"
+
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in [
+                'code', 'season', 'net_interest_income',
+                'net_noninterest_income', 'net_income',
+                'net_profit_before_tax', 'net_profit_after_tax',
+                'operation_expenses'
+        ]:
+            col_dict[col] = terms[col]
+        col_dict['EPS'] = '基本每股盈餘'
+        return col_dict
 
     def get_values(self):
         return {
@@ -44,6 +57,18 @@ class BankProfitLossData(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.season}"
+
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in [
+                'code', 'season', 'net_interest_income',
+                'net_noninterest_income', 'deposit', 'net_profit_before_tax',
+                'net_profit_after_tax', 'operation_expenses'
+        ]:
+            col_dict[col] = terms[col]
+        col_dict['EPS'] = '基本每股盈餘'
+        return col_dict
 
     def get_values(self):
         return {
@@ -73,6 +98,18 @@ class StandardProfitLossData(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.season}"
+
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in [
+                'code', 'season', 'business_income', 'business_interest',
+                'gross', 'net_profit_before_tax', 'net_profit_after_tax',
+                'operation_expenses', 'operation_cost'
+        ]:
+            col_dict[col] = terms[col]
+        col_dict['EPS'] = '基本每股盈餘'
+        return col_dict
 
     def get_values(self):
         return {
@@ -104,6 +141,19 @@ class InsuranceProfitLossData(models.Model):
     def __str__(self):
         return f"{self.code} {self.season}"
 
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in [
+                'code', 'season', 'net_business_income',
+                'net_business_interest', 'net_income', 'net_profit_before_tax',
+                'net_profit_after_tax', 'operation_expenses', 'operation_cost',
+                'non_operation_income'
+        ]:
+            col_dict[col] = terms[col]
+        col_dict['EPS'] = '基本每股盈餘'
+        return col_dict
+
     def get_values(self):
         return {
             'net_business_income': self.business_income,
@@ -130,6 +180,17 @@ class OtherProfitLossData(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.season}"
+
+    @staticmethod
+    def get_columns():
+        col_dict = {}
+        for col in [
+                'code', 'season', 'expenses', 'net_profit_before_tax',
+                'net_profit_after_tax'
+        ]:
+            col_dict[col] = terms[col]
+        col_dict['EPS'] = '基本每股盈餘'
+        return col_dict
 
     def get_values(self):
         return {

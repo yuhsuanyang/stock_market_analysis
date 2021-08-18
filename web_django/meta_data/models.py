@@ -14,6 +14,16 @@ class StockMetaData(models.Model):
     def __str__(self):
         return f"{self.code} {self.name}"
 
+    @staticmethod
+    def get_columns():
+        return {
+            'code': '公司代碼',
+            'name': '公司名稱',
+            'listed_date': '上市日期',
+            'industry_type': '產業類別',
+            'company_type': '公司屬性'
+        }
+
     def get_asset_debt_url(self):
         return reverse('asset_debt:dashboard', args=[self.code])
 
