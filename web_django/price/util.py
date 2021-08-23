@@ -1,13 +1,11 @@
 import time
-import pandas as pd
-import requests
 import yfinance as yf
-from io import StringIO
 from datetime import datetime
 
 import plotly.graph_objects as go
 import dash_core_components as dcc
 import dash_html_components as html
+from plotly.subplots import make_subplots
 from django_plotly_dash import DjangoDash
 from dash.dependencies import Input, Output
 
@@ -18,7 +16,9 @@ def query_historical_price(stock_code, end_date):
     start = end - 86400 * 365 * 5
     print('stock_code:', stock_code)
     start_date = time.strftime('%Y-%m-%d', time.localtime(start))
-    data = yf.download(f"{stock_code}.TW", start=start_date, end=end_date)[['Open', 'High', 'Low', 'Close', 'Volume']]
+    data = yf.download(f"{stock_code}.TW", start=start_date, end=end_date)[[
+        'Open', 'High', 'Low', 'Close', 'Volume'
+    ]]
     data['Date'] = data.index.astype(str)
     data = data.reset_index(drop=True)
     data = data[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
@@ -29,10 +29,38 @@ def query_historical_price(stock_code, end_date):
     return data
 
 
-def create_dash(stock_code, company_name, df):
+def create_dash(stock_code, company_name, price_df, institutional_df):
     features = ['daily', '5MA', '20MA', '60MA', 'k線']
     slider_style = {'margin-right': '-100px'}
     app = DjangoDash('Price_Dashboard')
+    bar_chart2 = make_subplots(rows=4,
+                               cols=1,
+                               subplot_titles=('', '外資', '投信', '自營商'),
+                               shared_xaxes=True)
+    bar_chart2.append_trace(go.Scatter(
+        x=institutional_df['date'],
+        y=(institutional_df['foreign'] + institutional_df['invest'] +
+           institutional_df['dealer']).values / 1000,
+        mode='lines+markers'),
+                            row=1,
+                            col=1)
+    bar_chart2.append_trace(go.Bar(x=institutional_df['date'],
+                                   y=(institutional_df['foreign'] /
+                                      1000).values),
+                            row=2,
+                            col=1)
+    bar_chart2.append_trace(go.Bar(x=institutional_df['date'],
+                                   y=(institutional_df['invest'] /
+                                      1000).values),
+                            row=3,
+                            col=1)
+    bar_chart2.append_trace(go.Bar(x=institutional_df['date'],
+                                   y=(institutional_df['dealer'] /
+                                      1000).values),
+                            row=4,
+                            col=1)
+    bar_chart2.update_yaxes(title='成交量（千股）')
+    bar_chart2.update_layout(showlegend=False)
     app.layout = html.Div(
         [
             html.H3(id='title',
@@ -65,26 +93,38 @@ def create_dash(stock_code, company_name, df):
                       }),
             dcc.RangeSlider(id='slider',
                             min=0,
-                            max=len(df) - 1,
-                            value=[len(df) - 90, len(df) - 1],
+                            max=len(price_df) - 1,
+                            value=[len(price_df) - 90,
+                                   len(price_df) - 1],
                             step=1,
                             marks={
                                 0: {
-                                    'label': df.date[0],
+                                    'label': price_df.date[0],
                                     'style': slider_style
                                 },
-                                len(df) - 90: {
-                                    'label': df.date.iloc[-90],
+                                len(price_df) - 90: {
+                                    'label': price_df.date.iloc[-90],
                                     'style': {
                                         'margin-top': '-40px',
                                         'margin-right': '-100px'
                                     }
                                 },
-                                len(df) - 1: {
-                                    'label': df.date.iloc[-1],
+                                len(price_df) - 1: {
+                                    'label': price_df.date.iloc[-1],
                                     'style': slider_style
                                 }
-                            })
+                            }),
+            html.H3(children="近90天三大法人買賣超",
+                    style={
+                        'text-align': 'center',
+                        'margin-top': '20%'
+                    }),
+            dcc.Graph(figure=bar_chart2,
+                      style={
+                          'width': '110%',
+                          'height': '800px',
+                          'text-align': 'center'
+                      }),
         ],
         style={
             'position': 'absolute',
@@ -105,7 +145,7 @@ def create_dash(stock_code, company_name, df):
         selected_features = [features[i] for i in contents]
         line_colors = ['dimgray', 'dodgerblue', 'violet', 'orange']
         fig = go.Figure()
-        selected_data = df.iloc[date_range[0]:date_range[1] + 1]
+        selected_data = price_df.iloc[date_range[0]:date_range[1] + 1]
         x = selected_data.date
         #for col in selected_features:
         for i in contents:
@@ -140,11 +180,11 @@ def create_dash(stock_code, company_name, df):
 
     @app.callback(Output('slider', 'marks'), [Input('slider', 'value')])
     def update_slider_mark(date_range):
-        start = df.date.iloc[date_range[0]]
-        end = df.date.iloc[date_range[1]]
+        start = price_df.date.iloc[date_range[0]]
+        end = price_df.date.iloc[date_range[1]]
         return {
             0: {
-                'label': df.date[0],
+                'label': price_df.date[0],
                 'style': slider_style
             },
             date_range[0]: {
@@ -162,7 +202,7 @@ def create_dash(stock_code, company_name, df):
 
     @app.callback(Output('bar_chart', 'figure'), [Input('slider', 'value')])
     def update_bar_chart(date_range):
-        selected_data = df.iloc[date_range[0]:date_range[1] + 1]
+        selected_data = price_df.iloc[date_range[0]:date_range[1] + 1]
         bull = selected_data[selected_data.daily > selected_data.open]
         bear = selected_data[selected_data.daily < selected_data.open]
         tie = selected_data[selected_data.daily == selected_data.open]

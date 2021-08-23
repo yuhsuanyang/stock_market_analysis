@@ -67,7 +67,7 @@ def industry_ranking(df):
 def get_tables(request):
     df = pd.read_csv(f"{root}/daily_report.csv")
     with open(f"{root}/data_date_record.txt", "r") as f:
-        last_date = f.read()
+        last_date = f.readlines()[0]
 
     df = df.dropna()
     context = {
@@ -76,6 +76,7 @@ def get_tables(request):
         'rise': make_ranking(df, 'fluctuation', False),
         'drop': make_ranking(df, 'fluctuation'),
         'volume': make_ranking(df, 'volume', False),
+        #        'investor_overbuy' =
         'PE': make_ranking(df, 'PE', filter_PE=True),
         'industry': industry_ranking(df)
     }

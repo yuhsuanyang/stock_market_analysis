@@ -4,7 +4,7 @@ from django.shortcuts import render
 from datetime import datetime, timedelta
 
 # from .models import StockMetaData
-from price.models import PriceData
+from price.models import PriceData, InstitutionalInvestorData
 
 from .util import ROOT, meta_data, download_stock_price, download_institutional_investor, download_punishment
 
@@ -20,7 +20,7 @@ print('previous_date: ', previous)
 stocks = [stock.__str__() for stock in meta_data]
 
 
-def get_latest_data():  # 即時爬取大資料
+def get_latest_data():  # 即時爬取大盤資料
     start_date = datetime.strftime(previous, '%Y-%m-%d')
     end_date = datetime.strftime(today, '%Y-%m-%d')
 
@@ -58,11 +58,30 @@ def update_price_table(df, date):
         row.save()
 
 
-def update_stock_price(compare_date):
-    # 下載股價資料+更新db
-    with open(f"{ROOT}/data_date_record.txt", "r") as f:
-        last_date = f.read()
+def update_institutional_table(df, date):
+    for i in range(len(df)):
+        first_row = InstitutionalInvestorData.objects.all().filter(
+            code=int(df.code[i])).order_by("date")[0]
+        row = InstitutionalInvestorData(code=int(df.code[i]),
+                                        date=date,
+                                        key=f'{int(df.code[i])} {date}',
+                                        foreign_buy=df.foreign_buy[i],
+                                        foreign_sell=df.foreign_sell[i],
+                                        invest_buy=df.invest_buy[i],
+                                        invest_sell=df.invest_sell[i],
+                                        dealer_buy=df.dealer_buy[i],
+                                        dealer_sell=df.dealer_sell[i])
+        first_row.delete()
+        row.save()
 
+
+def update_data(compare_date, token):
+    # 下載資料+更新db, table: 0/1
+    table = {0: 'price', 1: 'institutional'}
+    with open(f"{ROOT}/data_date_record.txt", "r") as f:
+        contents = f.readlines()
+
+    last_date = contents[token]
     last_date = datetime.strptime(last_date.strip(), '%Y-%m-%d')
     print('last record date: ', last_date)
     tracking_days = (compare_date - last_date).days  # - 1
@@ -73,47 +92,77 @@ def update_stock_price(compare_date):
             datestr = datetime.strftime(last_date + timedelta(days=d),
                                         '%Y-%m-%d')
             # download data and cleaning
-            one_day_data = download_stock_price(datestr.replace('-', ''))
-            if type(one_day_data) == pd.DataFrame:
-                print('updating db', datestr)
-                update_price_table(one_day_data, datestr)
-                dates.append(datestr)
+            if token == 0:
+                one_day_data = download_stock_price(datestr.replace('-', ''))
+                if type(one_day_data) == pd.DataFrame:
+                    print('updating db', datestr)
+                    update_price_table(one_day_data, datestr)
+                    dates.append(datestr)
+            elif token == 1:
+                one_day_data = download_institutional_investor(
+                    datestr.replace('-', ''))
+                if type(one_day_data) == pd.DataFrame:
+                    print('updating db', datestr)
+                    update_institutional_table(one_day_data, datestr)
+                    dates.append(datestr)
+
         if len(dates):
+            contents[token] = dates[-1] + '\n'
+            print(contents)
             with open(f"{ROOT}/data_date_record.txt", 'w') as f:
-                f.write(dates[-1])
+                f.writelines(contents)
             print('creating daily report')
+
         sum_up()  # create daily report
     else:
-        print('price data is already up to date')
+        print(f'{table[token]} data is already up to date')
+
+
+#        sum_up()  # create daily report
 
 
 def sum_up():
     # 製作每日報告
-    whole_data = PriceData.objects.all().order_by('-date')
-    today = whole_data.values('date').distinct()[0]
-    previous_day = whole_data.values('date').distinct()[1]
+    price_data = PriceData.objects.all().order_by('-date')
+    today = price_data.values('date').distinct()[0]
+    previous_day = price_data.values('date').distinct()[1]
     # print(today, previous_day)
-    data = whole_data.filter(date=today['date'])
-    df = [[
+    today_price_data = price_data.filter(date=today['date'])
+    today = InstitutionalInvestorData.objects.order_by('-date').values(
+        'date').distinct()[0]
+    institutional_data = InstitutionalInvestorData.objects.filter(
+        date=today['date'])
+
+    price_df = [[
         row.code,
         meta_data.filter(code=row.code)[0].name,
         meta_data.filter(code=row.code)[0].industry_type, row.Close,
         row.Volume, row.PE
-    ] for row in data]
-    df = pd.DataFrame(df,
-                      columns=[
-                          'code', 'name', 'industry_type', 'today_close',
-                          'volume', 'PE'
-                      ])
+    ] for row in today_price_data]
+    price_df = pd.DataFrame(price_df,
+                            columns=[
+                                'code', 'name', 'industry_type', 'today_close',
+                                'volume', 'PE'
+                            ])
     previous_close = []
-    for stock_code in df['code'].values:
-        row = whole_data.filter(date=previous_day['date']).filter(
+    for stock_code in price_df['code'].values:
+        row = price_data.filter(date=previous_day['date']).filter(
             code=stock_code)
         if len(row):
             previous_close.append([stock_code, row[0].Close])
-    df = df.merge(pd.DataFrame(previous_close,
-                               columns=['code', 'previous_close']),
-                  how='left')
+
+    institutional_df = [[
+        row.code,
+        row.foreign_buy - row.foreign_sell,
+        row.invest_buy - row.invest_sell,
+        row.dealer_buy - row.dealer_sell,
+    ] for row in institutional_data]
+    institutional_df = pd.DataFrame(
+        institutional_df, columns=['code', 'foreign', 'insvest', 'dealer'])
+    df = price_df.merge(pd.DataFrame(previous_close,
+                                     columns=['code', 'previous_close']),
+                        how='left')
+    df = df.merge(institutional_df, how='left')
     df['volume'] = df['volume'] / 1000
     df['updowns'] = round(df['today_close'] - df['previous_close'], 2)
     df['fluctuation'] = round((df['today_close'] - df['previous_close']) *
@@ -131,9 +180,12 @@ def main(request):
     if datetime.now().time().hour >= 14 or datetime.now().time(
     ).hour <= 9:  # 每天兩點以後更新股價
         print('-' * 10, 'updating stock price')
-        update_stock_price(datetime.strptime(data['date'], '%Y-%m-%d'))
+        update_data(datetime.strptime(data['date'], '%Y-%m-%d'), 0)
 
-    # TODO: 每天五點以後更新三大法人
+    if datetime.now().time().hour >= 17 or datetime.now().time(
+    ).hour <= 9:  # 每天五點以後更新三大法人
+        print('-' * 10, 'updating institutional transaction data')
+        update_data(datetime.strptime(data['date'], '%Y-%m-%d'), 1)
 
     if data['today_close'] > data['yesterday_close']:
         trend_light = 'pink'
@@ -151,8 +203,3 @@ def main(request):
     #   print(stocks[0])
     data['stock_list'] = stocks
     return render(request, 'index.html', context=data)
-
-
-# if __name__ == "__main__":
-#     get_latest_data()
-#     update_stock_price()

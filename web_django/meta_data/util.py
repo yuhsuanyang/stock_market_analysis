@@ -49,7 +49,7 @@ def download_stock_price(datestr):  # 下載某天股價
 
 
 def download_institutional_investor(date):
-    # 下載某天大法人
+    # 下載某天三大法人
     r = requests.get('http://www.tse.com.tw/fund/T86?response=csv&date=' +
                      date + '&selectType=ALLBUT0999')
     try:
@@ -57,9 +57,9 @@ def download_institutional_investor(date):
                          header=1).dropna(how='all', axis=1).dropna(how='any')
     except pd.errors.EmptyDataError:
         print(f'{date} no data')
-        return -1
-    df = df[np.isin(df['證券代號'],
-                    meta_data.code.astype(str))].reset_index(drop=True)
+        return
+    stock_codes = [c.split(' ')[0] for c in stocks]
+    df = df[np.isin(df['證券代號'], stock_codes)].reset_index(drop=True)
     df['外資買進股數'] = df['外陸資買進股數(不含外資自營商)'].apply(preprocess)
     df['外資賣出股數'] = df['外陸資賣出股數(不含外資自營商)'].apply(preprocess)
     df['自營商買進股數'] = df['自營商買進股數(自行買賣)'].apply(
@@ -67,11 +67,14 @@ def download_institutional_investor(date):
     df['自營商賣出股數'] = df['自營商賣出股數(自行買賣)'].apply(
         preprocess) + df['自營商賣出股數(避險)'].apply(preprocess)
     df = df[[
-        '證券代號', '證券名稱', '外資買進股數', '外資賣出股數', '自營商買進股數', '自營商賣出股數', '投信買進股數',
-        '投信賣出股數'
+        '證券代號', '外資買進股數', '外資賣出股數', '自營商買進股數', '自營商賣出股數', '投信買進股數', '投信賣出股數'
     ]]
     df['投信買進股數'] = df['投信買進股數'].apply(preprocess)
     df['投信賣出股數'] = df['投信賣出股數'].apply(preprocess)
+    df.columns = [
+        'code', 'foreign_buy', 'foreign_sell', 'dealer_buy', 'dealer_sell',
+        'invest_buy', 'invest_sell'
+    ]
     return df
 
 

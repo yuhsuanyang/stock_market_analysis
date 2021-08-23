@@ -15,7 +15,7 @@ A UI to present stock data of listed market
    - [x] visualize
 4. dividend
    - [x] crawl
-   - [ ] visualize
+   - [x] visualize
 5. stock price
    - [x] crawl history
    - [x] crawl real time
