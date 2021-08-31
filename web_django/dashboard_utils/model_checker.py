@@ -20,7 +20,7 @@ class Checker(object):
         elif 'date' in self.columns:
             query_set = query_set.order_by('date')
             print(f"start date: {query_set[0].date}")
-            print(f"end ate: {query_set[len(query_set)-1].date}")
+            print(f"end date: {query_set[len(query_set)-1].date}")
         elif 'season' in self.columns:
             query_set = query_set.order_by('season')
             print(f"start season: {query_set[0].season}")
