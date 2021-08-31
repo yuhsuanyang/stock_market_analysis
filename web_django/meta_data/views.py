@@ -114,6 +114,7 @@ def update_data(compare_date, token):
             print('creating daily report')
 
         sum_up()  # create daily report
+        daily_correlation()
     else:
         print(f'{table[token]} data is already up to date')
 
@@ -173,6 +174,23 @@ def sum_up():
     df.to_csv(f"{ROOT}/daily_report.csv", index=False)
 
 
+def daily_correlation():
+    df_closing = []
+    for code in stocks:
+        code = code.split(' ')[0]
+        query_set = PriceData.objects.filter(code=code).order_by('date')
+        dates, close = [], []
+        for row in query_set:
+            dates.append(row.date)
+            close.append(row.Close)
+        df_closing.append(pd.DataFrame(close, index=dates, columns=[code]))
+    df_closing = pd.concat(df_closing, axis=1)
+    corr = df_closing.corr()
+    print(corr)
+    #    df_closing.to_csv(f"{ROOT}/daily_corr.csv")
+    corr.to_csv(f"{ROOT}/daily_corr.csv")
+
+
 def main(request):
     print('-' * 10, 'downloading latest data')
     data = get_latest_data()
@@ -186,7 +204,6 @@ def main(request):
     ).hour <= 9:  # 每天五點以後更新三大法人
         print('-' * 10, 'updating institutional transaction data')
         update_data(datetime.strptime(data['date'], '%Y-%m-%d'), 1)
-
     if data['today_close'] > data['yesterday_close']:
         trend_light = 'pink'
         trend = 'red'

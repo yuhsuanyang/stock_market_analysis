@@ -7,6 +7,7 @@
 <li><a href="{{stock_info.get_asset_debt_url}}">資產負債表</a></li>
 <li><a href="{{stock_info.get_cashflow_url}}">現金流量表</a></li>
 <li><a href="{{stock_info.get_dividend_url}}">股利政策</a></li>
+<li>相似性比較</li>
 {% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
 <li class="companies">
   <a href="{{stock_name.get_price_url}}" target="_blank"
