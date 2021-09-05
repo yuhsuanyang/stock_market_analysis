@@ -12,26 +12,35 @@
       body {
         margin: 0;
         background-color: aliceblue;
-        min-width: 1000px; /*如果視窗寬度<800 就會需要scroll*/
+        min-width: 1200px; /*如果視窗寬度<800 就會需要scroll*/}
+     .logo {
+        /*position: absolute;*/
+        height: 100%;
+        margin-left: 10px;
+        display: inline-block;
       }
-      .search_bar {
-        position: absolute;
-        width: 200px; /*寬度會是content 的20%*/
+     .search_bar {
+        /*position: absolute;*/
+        width: 200px; 
         height: 40%;
-        left: 80px;
+        /*left: 80px;
         top: 30%;
+        margin-top: 30%;*/
+        margin-top: 19.5px;
         border-color: lightgray;
         border-radius: 10px;
         text-align: center;
         background-color: aliceblue;
       }
+
       .icon_button{
-        position: absolute;
-        top: 35%;
+      /*  position: absolute;
+        top: 35%;*/
         height: 40%;
         border: none;
         background-color: white;
         font-size: 20px;
+        display: inline-block;
     }
       .ranking_table{
           height: 12%; 
@@ -45,12 +54,7 @@
       .odd{
           background-color: aliceblue;
       }
-      #logo {
-        position: absolute;
-        height: 100%;
-        left: 10px;
-      }
-     #nav {
+      #nav {
         background-color: white;
         position: sticky;
         top: 0;
@@ -65,7 +69,16 @@
         margin: 0;
         font-weight: bold;
         font-size: 1.1em;
+        display: inline-block;
       }
+      #tools{
+        position: absolute;
+        top: 0%;
+        height: 100%;
+        margin-left: 10px;
+        display: inline-block;
+      }
+
       #contents {
         position: relative;
         /*height: 1700px;*/
@@ -97,6 +110,7 @@
       }
       li {
         float: left;
+        height: 25px;
         padding: 20px;
       }
       h3{
@@ -146,9 +160,9 @@
             this_element.style.backgroundColor = 'aliceblue';
         }
         
-        console.log(window.outerHeight);
+//        console.log(window.outerHeight);
         window.addEventListener("scroll", function get_offset(){remove_li_color();
-        console.log(scrollY);
+//        console.log(scrollY);
         ratio = scrollY/outerHeight
         if (ratio < 1){
             focused_li_id = 'link1';
@@ -162,8 +176,9 @@
   </head>
   <body>
     <div id="nav">
-        <a href="/overview"><img id="logo" src="{% static "logo_bird.png" %}"></a>     
-        <form action={% url 'price:posted_query' %} method="POST" target="_blank">
+        <a href="/overview"><img class="logo" src="{% static "logo_bird.png" %}"></a>    
+    <div id='tools'> 
+        <form action={% url 'price:posted_query' %} method="POST" target="_blank" style="display: inline-block; height: 100%">
         {% csrf_token %}
         <input
         class="search_bar"
@@ -173,7 +188,7 @@
         placeholder="查詢台股代碼/公司名稱"
         list="query"
         style="font-size: 15px"/>
-        <button class="icon_button" type="submit" style="left: 300px"><i class="fa fa-search"></i></button>
+        <button class="icon_button" type="submit"><i class="fa fa-search"></i></button>
     <datalist id="query">
         {% for stock_name in stock_list %}
         <option value="{{stock_name}}">
@@ -181,7 +196,8 @@
     </datalist>
 
       </form>
-      <a href={%url 'index'%}><button class="icon_button"  style="left: 340px"><i class="fa fa-home"></i></button></a>
+      <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
+    </div>
       <ul id="links">
           <li id="link1" style="background-color: aliceblue" onclick="move(this)">漲跌排行</li>
          <li id="link2" onclick="move(this)">成交量排行</li>
