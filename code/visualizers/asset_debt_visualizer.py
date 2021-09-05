@@ -46,10 +46,12 @@ class AssetDebtVisualizer(BaseVisualizer):
 
     def run_dash(self):
         pbr = '每股參考淨值'
-        asset_debt_table = self.plot_table(self.data.drop(columns=[pbr]))
-        one_line_plot = make_subplots(rows=2,
+        share_capital = '股本'
+        asset_debt_table = self.plot_table(self.data.drop(columns=[pbr, share_capital]))
+        one_line_plot = make_subplots(rows=3,
                                       cols=1,
-                                      subplot_titles=('負債比率', pbr))
+                                      subplot_titles=('負債比率', pbr, share_capital),
+                                      shared_xaxes=True)
         one_line_plot.append_trace(go.Scatter(
             x=self.data['季'],
             y=100 * (self.data['負債總額'] / self.data['資產總額']).values.reshape(-1),
@@ -62,8 +64,15 @@ class AssetDebtVisualizer(BaseVisualizer):
             mode='lines+markers'),
             row=2,
             col=1)
+        one_line_plot.append_trace(go.Scatter(
+            x=self.data['季'],
+            y=(self.data[share_capital]/10000).values.reshape(-1),
+            mode='lines+markers'),
+            row=3,
+            col=1)
         one_line_plot.update_yaxes(title_text='%', row=1, col=1)
         one_line_plot.update_yaxes(title_text='$NTD', row=2, col=1)
+        one_line_plot.update_yaxes(title_text='$NTD 萬', row=3, col=1)
         one_line_plot.update_layout(showlegend=False)
 
         app = JupyterDash(__name__)
@@ -81,10 +90,10 @@ class AssetDebtVisualizer(BaseVisualizer):
                               'label': self.features[i],
                               'value': i
                           } for i in range(len(self.features))
-                              if self.features[i] != pbr],
+                              if self.features[i] != pbr and self.features[i] != share_capital],
                           value=[
                               i for i in range(len(self.features))
-                              if self.features[i] != pbr
+                              if self.features[i] != pbr and self.features[i] != share_capital
                           ],
                           style={
                               'width': '900px',

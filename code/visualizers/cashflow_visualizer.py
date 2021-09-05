@@ -17,7 +17,7 @@ class CashflowVisualizer(BaseVisualizer):
                                             stock_id].name.values[0]
         self.col_dict = {
             '營運產生之現金流入（流出）': 'cash_from_operation',
-            '營業活動之淨現金流入（流出）': 'cash_from_opertation_acitivities',
+            '營業活動之淨現金流入（流出）': 'cash_from_operation_activities',
             '取得不動產、廠房及設備': 'real_estate',
             '投資活動之淨現金流入（流出）': 'cash_from_investment',
             '籌資活動之淨現金流入（流出）': 'cash_from_fundraise'
