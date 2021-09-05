@@ -186,7 +186,7 @@ def daily_correlation():
         df_closing.append(pd.DataFrame(close, index=dates, columns=[code]))
     df_closing = pd.concat(df_closing, axis=1)
     corr = df_closing.corr()
-    print(corr)
+    #    print(corr)
     #    df_closing.to_csv(f"{ROOT}/daily_corr.csv")
     corr.to_csv(f"{ROOT}/daily_corr.csv")
 
