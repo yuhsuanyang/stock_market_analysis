@@ -19,15 +19,24 @@ def summary_by_year(df):
 
 
 def create_dash(df):
-    df_total = summary_by_year(df)
-    print(df_total)
     app = DjangoDash('Dividend_Dashboard')
-    df.columns = [terms[col] for col in df.columns]
-    dividend_table = plot_table(df)
-    fig_bar = px.bar(df_total, x='年', y='數量', color='股利')
-    fig_bar.update_xaxes(tickvals=df_total['年'].unique())
-    app.layout = html.Div(
-        [
+    global_style = {
+        'position': 'absolute',
+        'left': '5%',
+        'width': '90%',
+        'text-align': 'center'
+    }
+    if not len(df):
+        app.layout = html.Div([html.H3(children='此公司近十年都沒有發放股利:/')],
+                              style=global_style)
+    else:
+        df_total = summary_by_year(df)
+        print(df_total)
+        df.columns = [terms[col] for col in df.columns]
+        dividend_table = plot_table(df)
+        fig_bar = px.bar(df_total, x='年', y='數量', color='股利')
+        fig_bar.update_xaxes(tickvals=df_total['年'].unique())
+        app.layout = html.Div([
             html.H3(children='歷年股利', style={'text_align': 'center'}),
             dcc.Graph(id='bar_chart',
                       figure=fig_bar,
@@ -44,9 +53,4 @@ def create_dash(df):
                     'marginBottom': '50px'
                 }),
         ],
-        style={
-            'position': 'absolute',
-            'left': '5%',
-            'width': '90%',
-            'text-align': 'center'
-        })
+                              style=global_style)

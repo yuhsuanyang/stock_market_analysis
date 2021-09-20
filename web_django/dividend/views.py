@@ -16,6 +16,8 @@ def get_posted_query(request):
 
 
 def create_df(model_table):
+    if not len(model_table):
+        return model_table
     df = {'year': [], 'season': []}
     season2word = {1.5: '上半年', 2.5: '下半年', 0: '-'}
     for col in model_table[0].get_values():
