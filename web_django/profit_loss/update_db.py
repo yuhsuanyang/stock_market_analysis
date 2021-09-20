@@ -63,7 +63,7 @@ def crawl(year, season):
         selected_columns = ['公司代號'] + company_columns[token]
         one_df = df[token][selected_columns]
         one_df.columns = ['code'] + company_columns_renames[token]
-        dfs[token] = one_df
+        dfs[token] = one_df.replace('--', 0)
 
     return dfs
 
