@@ -9,6 +9,8 @@ from plotly.subplots import make_subplots
 from django_plotly_dash import DjangoDash
 from dash.dependencies import Input, Output
 
+from dashboard_utils.common_styles import checklist_style, line_plot_style
+
 
 def query_historical_price(stock_code, end_date):
     end = datetime.strptime(end_date, '%Y-%m-%d')
@@ -73,18 +75,8 @@ def create_dash(stock_code, company_name, price_df, institutional_df):
                     'value': i
                 } for i in range(len(features))],
                 value=[i for i in range(len(features) - 1)],  # 預設沒有k線
-                style={
-                    'width': '100%',
-                    'height': '20px',
-                    'text-align': 'center'
-                }),
-            dcc.Graph(id='line_plot',
-                      style={
-                          'width': '100%',
-                          'height': '80%',
-                          'left': '10%',
-                          'text-align': 'center'
-                      }),
+                style=checklist_style),
+            dcc.Graph(id='line_plot', style=line_plot_style),
             dcc.Graph(id='bar_chart',
                       style={
                           'width': '100%',
@@ -142,7 +134,7 @@ def create_dash(stock_code, company_name, price_df, institutional_df):
                   [Input('checkbox', 'value'),
                    Input('slider', 'value')])
     def update_line_chart(contents, date_range):
-        selected_features = [features[i] for i in contents]
+        #        selected_features = [features[i] for i in contents]
         line_colors = ['dimgray', 'dodgerblue', 'violet', 'orange']
         fig = go.Figure()
         selected_data = price_df.iloc[date_range[0]:date_range[1] + 1]

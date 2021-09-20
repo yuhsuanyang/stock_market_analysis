@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output
 
 from dashboard_utils.terms import terms
 from dashboard_utils.common_functions import plot_table
+from dashboard_utils.common_styles import checklist_style, line_plot_style, table_style, layout_style
 
 
 def create_dash(df):
@@ -14,46 +15,23 @@ def create_dash(df):
     df['自由現金流'] = df['營運淨現金流'] + df['資本支出']
     df['淨現金流'] = df['營運淨現金流'] + df['籌資淨現金流'] + df['投資淨現金流']
     cashflow_table = plot_table(df)
-    app.layout = html.Div(
-        [
-            html.H3(children='近年現金流量表', style={'text-align': 'center'}),
-            dcc.Checklist(id='checkbox',
-                          options=[{
-                              'label': df.columns[i],
-                              'value': i
-                          } for i in range(len(df.columns))
-                                   if df.columns[i] != '季'],
-                          value=[
-                              i for i in range(len(df.columns))
-                              if df.columns[i] not in ['季', '資本支出', '營運現金流']
-                          ],
-                          style={
-                              'width': '100%',
-                              'height': '20px',
-                              'text-align': 'center'
-                          }),
-            dcc.Graph(id='line_plot',
-                      style={
-                          'width': '100%',
-                          'height': '80%',
-                          'left': '10%',
-                          'text-align': 'center'
-                      }),
-            html.Div(
-                [cashflow_table],
-                style={
-                    'width': '100%',
-                    'text-align': 'center',
-                    'marginTop': '50px',
-                    'marginBottom': '50px'
-                }),
-        ],
-        style={
-            'position': 'absolute',
-            'left': '5%',
-            'width': '90%',
-            'text-align': 'center'
-        })
+    app.layout = html.Div([
+        html.H3(children='近年現金流量表', style={'text-align': 'center'}),
+        dcc.Checklist(id='checkbox',
+                      options=[{
+                          'label': df.columns[i],
+                          'value': i
+                      } for i in range(len(df.columns))
+                               if df.columns[i] != '季'],
+                      value=[
+                          i for i in range(len(df.columns))
+                          if df.columns[i] not in ['季', '資本支出', '營運現金流']
+                      ],
+                      style=checklist_style),
+        dcc.Graph(id='line_plot', style=line_plot_style),
+        html.Div([cashflow_table], style=table_style),
+    ],
+                          style=layout_style)
 
     @app.callback(Output('line_plot', 'figure'), [Input('checkbox', 'value')])
     def update_line_chart(contents):

@@ -6,6 +6,7 @@ from django_plotly_dash import DjangoDash
 
 from dashboard_utils.terms import terms
 from dashboard_utils.common_functions import plot_table
+from dashboard_utils.common_styles import layout_style, table_style
 
 
 def summary_by_year(df):
@@ -20,15 +21,9 @@ def summary_by_year(df):
 
 def create_dash(df):
     app = DjangoDash('Dividend_Dashboard')
-    global_style = {
-        'position': 'absolute',
-        'left': '5%',
-        'width': '90%',
-        'text-align': 'center'
-    }
     if not len(df):
         app.layout = html.Div([html.H3(children='此公司近十年都沒有發放股利:/')],
-                              style=global_style)
+                              style=layout_style)
     else:
         df_total = summary_by_year(df)
         print(df_total)
@@ -44,13 +39,6 @@ def create_dash(df):
                           'width': '100%',
                           'text-align': 'center'
                       }),
-            html.Div(
-                [dividend_table],
-                style={
-                    'width': '100%',
-                    'text-align': 'center',
-                    'marginTop': '50px',
-                    'marginBottom': '50px'
-                }),
+            html.Div([dividend_table], style=table_style),
         ],
-                              style=global_style)
+                              style=layout_style)

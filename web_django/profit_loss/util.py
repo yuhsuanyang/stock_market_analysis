@@ -8,6 +8,7 @@ from dash.dependencies import Input, Output
 
 from dashboard_utils.terms import terms
 from dashboard_utils.common_functions import plot_table
+from dashboard_utils.common_styles import layout_style, checklist_style, line_plot_style, table_style
 
 
 def create_percentage_df(df):
@@ -84,26 +85,9 @@ def create_dash(df):
                           i for i in range(len(df1.columns))
                           if df1.columns[i] != '季'
                       ],
-                      style={
-                          'width': '100%',
-                          'height': '20px',
-                          'text-align': 'center'
-                      }),
-        dcc.Graph(id='profit_loss_line_plot',
-                  style={
-                      'width': '100%',
-                      'height': '80%',
-                      'left': '10%',
-                      'text-align': 'center'
-                  }),
-        html.Div(
-            [profit_loss_table],
-            style={
-                'width': '100%',
-                'text-align': 'center',
-                'marginTop': '50px',
-                'marginBottom': '50px'
-            }),
+                      style=checklist_style),
+        dcc.Graph(id='profit_loss_line_plot', style=line_plot_style),
+        html.Div([profit_loss_table], style=table_style),
         html.Div([
             dcc.Graph(id='eps_figure',
                       figure=eps_one_line_plot,
@@ -112,7 +96,6 @@ def create_dash(df):
                           'left': '10%',
                           'height': '10%',
                           'text-align': 'center',
-                          'display': 'block'
                       }),
             html.Div([
                 html.Button(
@@ -171,13 +154,7 @@ def create_dash(df):
                 'text-align': 'center',
             }))
 
-    app.layout = html.Div(div_children,
-                          style={
-                              'position': 'absolute',
-                              'left': '5%',
-                              'width': '90%',
-                              'text-align': 'center'
-                          })
+    app.layout = html.Div(div_children, style=layout_style)
 
     @app.callback(Output('profit_loss_line_plot', 'figure'),
                   [Input('checkbox', 'value')])

@@ -7,6 +7,7 @@ from dash.dependencies import Input, Output
 
 from dashboard_utils.terms import terms
 from dashboard_utils.common_functions import plot_table
+from dashboard_utils.common_styles import checklist_style, line_plot_style, table_style, layout_style
 
 
 def create_dash(df):
@@ -55,26 +56,9 @@ def create_dash(df):
                           i for i in range(len(df1.columns))
                           if df1.columns[i] != '季'
                       ],
-                      style={
-                          'width': '100%',
-                          'height': '20px',
-                          'text-align': 'center'
-                      }),
-        dcc.Graph(id='asset_debt_line_plot',
-                  style={
-                      'width': '100%',
-                      'height': '80%',
-                      'left': '10%',
-                      'text-align': 'center'
-                  }),
-        html.Div(
-            [asset_debt_table],
-            style={
-                'width': '100%',
-                'text-align': 'center',
-                'marginTop': '50px',
-                'marginBottom': '50px'
-            }),
+                      style=checklist_style),
+        dcc.Graph(id='asset_debt_line_plot', style=line_plot_style),
+        html.Div([asset_debt_table], style=table_style),
         dcc.Graph(figure=one_line_plot,
                   style={
                       'width': '900px',
@@ -83,13 +67,7 @@ def create_dash(df):
                       'text-align': 'center'
                   })
     ]
-    app.layout = html.Div(div_children,
-                          style={
-                              'position': 'absolute',
-                              'left': '5%',
-                              'width': '90%',
-                              'text-align': 'center'
-                          })
+    app.layout = html.Div(div_children, style=layout_style)
 
     @app.callback(Output('asset_debt_line_plot', 'figure'),
                   [Input('checkbox', 'value')])
