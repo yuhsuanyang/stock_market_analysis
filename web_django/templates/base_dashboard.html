@@ -15,28 +15,33 @@
         min-width: 1200px; /*如果視窗寬度<800 就會需要scroll*/
       }
       .logo {
-        position: absolute;
+        /*position: absolute;*/
         height: 100%;
-        left: 10px;
+        margin-left: 10px;
+        display: inline-block;
       }
       .search_bar {
-        position: absolute;
-        width: 200px; /*寬度會是content 的20%*/
+        /*position: absolute;*/
+        width: 200px; 
         height: 40%;
-        left: 80px;
+        /*left: 80px;
         top: 30%;
+        margin-top: 30%;*/
+        margin-top: 19.5px;
         border-color: lightgray;
         border-radius: 10px;
         text-align: center;
         background-color: aliceblue;
       }
     .icon_button{
-        position: absolute;
-        top: 35%;
+        /*position: absolute;
+        top: 35%*/;
         height: 40%;
+        margin-left: 5px;
         border: none;
         background-color: white;
         font-size: 20px;
+        display: inline-block;
     }
       .companies {
         font-size: 10%;
@@ -49,6 +54,13 @@
         height: 65px;
         z-index: 1;
       }
+      #tools{
+        position: absolute;
+        top: 0%;
+        height: 100%;
+        margin-left: 10px;
+        display: inline-block;
+      }
       #links {
         position: absolute;
         height: 100%;
@@ -57,6 +69,7 @@
         margin: 0;
         font-weight: bold;
         font-size: 1.1em;
+        display: inline-block;
       }
       #contents {
         position: relative;
@@ -80,8 +93,12 @@
         position: absolute;
         width: 40%;
         height: 100%;
-        right: 0%;
+        right: 5%;
         top: 0%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: right;
       }
       #same_trade {
         position: absolute;
@@ -106,7 +123,6 @@
         margin-top: 1%;
         margin-right: 75%;*/
         background-color: white;
-        font-size: 1vw;
       }
       #dashboard{
           position: absolute;
@@ -122,6 +138,7 @@
       }
       li {
         float: left;
+        height: 25px;
         padding: 20px;
       }
 /*      div{
@@ -156,26 +173,27 @@
   <body>
     <div id="nav">
         <a href="/overview"><img class="logo" src="{% static "logo_bird.png" %}"></a>
-            {#%include 'search_bar.html'%#} 
-        <form action={% url 'price:posted_query' %} method="POST" target="_blank">
+            {#%include 'search_bar.html'%#}
+        <div id="tools">
+            <form action={% url 'price:posted_query' %} method="POST" target="_blank" style="display: inline-block; height: 100%;">
         {% csrf_token %}
-        <input
-        class="search_bar"
-        type="text"
-        name="stock_id"
-        id="stock_code"
-        placeholder="查詢台股代碼/公司名稱"
-        list="query"
-        style="font-size: 15px"/>
-        <button class="icon_button" type="submit" style="left: 300px"><i class="fa fa-search"></i></button>
-    <datalist id="query">
-        {% for stock_name in stock_list %}
-        <option value="{{stock_name}}">
-        {% endfor %}
-    </datalist>
-
-      </form>
-      <a href={%url 'index'%}><button class="icon_button"  style="left: 340px"><i class="fa fa-home"></i></button></a>
+            <input
+            class="search_bar"
+            type="text"
+            name="stock_id"
+            id="stock_code"
+            placeholder="查詢台股代碼/公司名稱"
+            list="query"
+            style="font-size: 15px"/>
+            <button class="icon_button" type="submit"><i class="fa fa-search"></i></button>
+        <datalist id="query">
+            {% for stock_name in stock_list %}
+            <option value="{{stock_name}}">
+            {% endfor %}
+        </datalist>
+        </form>
+      <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
+    </div>
       <ul id="links">
         {% block link_list%}{% endblock%}  
         <!--<li style="background-color: aliceblue">近期股價</li>
@@ -188,24 +206,8 @@
       <div id="title">
         <h2>{{stock_id}}</h2>
         <div id="basic_info">
-          <table
-            style="
-              position: absolute;
-              right: 10%;
-              top: 10%;
-              width: 40%;
-              text-align: right;
-            "
-          >
-            <tr>
-              <td id="industry">
-                <font color="darkcyan" onclick="show()">{{industry_type}}</font>
-              </td>
-            </tr>
-            <tr>
-              <td style="font-size: 1vw">上市日期: {{listed_date}}</td>
-            </tr>
-          </table>
+          <span><font color="darkcyan" onclick="show()">{{industry_type}}</font></span>
+          <span>上市日期: {{listed_date}}</span>
           <div id="same_trade">
             <ul>
                 {% block same_trade %}{% endblock %}
