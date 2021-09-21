@@ -1,3 +1,5 @@
+# how to use: in "shell":
+# from dashboard_utils import model_checker
 class Checker(object):
     def __init__(self, model):
         self.model = model

@@ -26,7 +26,8 @@ A UI to present stock data of listed market
    - [x] index
    - [x] view: technical price analysis
    - [x] view: fundamentals
-   - [ ] similarity
+   - [x] similarity
+8. deploy on heroku
 
 ### data
 

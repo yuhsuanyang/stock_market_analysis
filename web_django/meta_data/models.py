@@ -38,3 +38,6 @@ class StockMetaData(models.Model):
 
     def get_dividend_url(self):
         return reverse('dividend:dashboard', args=[self.code])
+
+    def get_similarity_url(self):
+        return reverse('similarity:dashboard', args=[self.code])
