@@ -25,7 +25,8 @@ profit_loss_table_dict = {
     'holdings': HoldingsProfitLossData,
     'bank': BankProfitLossData,
     'insurance': InsuranceProfitLossData,
-    'standard': StandardProfitLossData
+    'standard': StandardProfitLossData,
+    'other': OtherProfitLossData
 }
 
 
@@ -72,15 +73,22 @@ def get_score(stock_code):
 def prepare_data(stock_code):
     df = get_score(stock_code)
     sorted_df = df.sort_values(by='score',
-                               ascending=False).head(11).reset_index(drop=True)
+                               ascending=False).reset_index(drop=True)
+    #    print(sorted_df)
     data = {}
-    for i in sorted_df.index:
+    i = 0
+    #    for i in sorted_df.index:
+    while len(data) < 11:
         id_ = sorted_df.stock_id.iloc[i]
+        print(i, id_)
         corr = sorted_df['corr'].iloc[i]
         score = sorted_df['score'].iloc[i]
         basic = StockMetaData.objects.filter(code=id_)[0]
         price = price_data.filter(code=id_).order_by('-date')
         company_type = basic.company_type
+        if company_type == 'other':
+            i += 1
+            continue
         EPS = profit_loss_table_dict[company_type].objects.filter(
             code=id_).order_by('-season')[0]
         #print(EPS)
@@ -99,6 +107,7 @@ def prepare_data(stock_code):
             'pbr': PBR,
             'dividend': dividend,
         }
+        i += 1
 
     return data
 
