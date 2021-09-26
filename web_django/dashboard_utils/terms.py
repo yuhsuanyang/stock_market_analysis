@@ -14,6 +14,7 @@ terms = {
     'date': '日期',
     'deposits': '各項提存',
     'distribution_date': '發放日期',
+    'ex_dividend_date': '除權息日期',
     'expenses': '支出',
     'foreign_buy': '外資買進股數',
     'foreign_sell': '外資賣出股數',
@@ -40,5 +41,6 @@ terms = {
     'season': '季',
     'share_capital': '股本',
     'stock_dividend': '股票股利',
-    'year': '年'
+    'year': '年',
+    'year_EPS': '年度累積EPS'
 }

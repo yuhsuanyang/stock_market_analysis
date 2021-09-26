@@ -1,12 +1,19 @@
 import pandas as pd
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import DividendData
 from meta_data.models import StockMetaData
+from profit_loss.models import *
+from .models import DividendData
 from .util import create_dash
 # Create your views here.
 
 meta_data = StockMetaData.objects.all()
+profit_loss_table_dict = {
+    'holdings': HoldingsProfitLossData,
+    'bank': BankProfitLossData,
+    'insurance': InsuranceProfitLossData,
+    'standard': StandardProfitLossData
+}
 
 
 def get_posted_query(request):
@@ -15,15 +22,21 @@ def get_posted_query(request):
         reverse('dividend:dashboard', kwargs={'stock_id': stock_id}))
 
 
-def create_df(model_table):
-    if not len(model_table):
-        return model_table
-    df = {'year': [], 'season': []}
+def create_df(dividend_table, profit_loss_table):
+    if not len(dividend_table):
+        return dividend_table
+    df = {'year': [], 'season': [], 'year_EPS': []}
     season2word = {1.5: '上半年', 2.5: '下半年', 0: '-'}
-    for col in model_table[0].get_values():
+    for col in dividend_table[0].get_values():
         df[col] = []
-    for row in model_table:
+    for row in dividend_table:
         df['year'].append(row.year)
+        if row.year >= 105 and row.season in [0, 2.5, 4]:
+            #        print(f"{row.year}_4")
+            eps = profit_loss_table.filter(season=f"{row.year}_4")[0].EPS
+        else:
+            eps = '-'
+        df['year_EPS'].append(eps)
         if row.season in season2word:
             df['season'].append(season2word[row.season])
         else:
@@ -36,15 +49,17 @@ def create_df(model_table):
     return df
 
 
-def get_raw_data(stock_id):
-    table = DividendData.objects.filter(code=stock_id)
-    return create_df(table)
+def get_raw_data(stock_id, company_type):
+    profit_loss_table = profit_loss_table_dict[company_type].objects.filter(
+        code=stock_id)
+    dividend_table = DividendData.objects.filter(code=stock_id)
+    return create_df(dividend_table, profit_loss_table)
 
 
 def main(request, stock_id):
     info = meta_data.filter(code=stock_id)[0]
     same_trade = meta_data.filter(industry_type=info.industry_type)
-    df = get_raw_data(stock_id)
+    df = get_raw_data(stock_id, info.company_type)
     print(df)
     app = create_dash(df)
     data = {}

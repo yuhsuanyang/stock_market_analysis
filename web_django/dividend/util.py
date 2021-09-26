@@ -30,6 +30,7 @@ def create_dash(df):
         df.columns = [terms[col] for col in df.columns]
         dividend_table = plot_table(df)
         fig_bar = px.bar(df_total, x='年', y='數量', color='股利')
+        fig_bar.update_traces(width=0.5)
         fig_bar.update_xaxes(tickvals=df_total['年'].unique())
         app.layout = html.Div([
             html.H3(children='歷年股利', style={'text_align': 'center'}),
