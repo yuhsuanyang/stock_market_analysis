@@ -4,6 +4,7 @@
   <head>
     <title>財報鳥</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--    <link rel="stylesheet" href="{#% static "styles.css" %#}"/>-->
     <style>
         body{
             margin: 0;
@@ -25,7 +26,6 @@
         width: 100%; /*寬度會和back一樣*/
         height: 70%; /*高度會是back的0.7*/
         top: 30%; /*會從back的高度的30％開始*/
-        text-align: center;
       }
       .search{
         position: absolute;
@@ -112,7 +112,7 @@
             }
   </script>
   </head>
-  <body>
+  <body style="min-height: 600px; font-size: 16px">
     <div class="back">
       <div class="content">
           <a href="/overview"><img id="logo" src="{% static "logo_bird0.png" %}"></a>
