@@ -8,41 +8,9 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+   <link rel="stylesheet" href="/css/styles.css" type="text/css"/>
     <style>
-      body {
-        margin: 0;
-        background-color: aliceblue;
-        min-width: 1200px; /*如果視窗寬度<800 就會需要scroll*/}
-     .logo {
-        /*position: absolute;*/
-        height: 100%;
-        margin-left: 10px;
-        display: inline-block;
-      }
-     .search_bar {
-        /*position: absolute;*/
-        width: 200px; 
-        height: 40%;
-        /*left: 80px;
-        top: 30%;
-        margin-top: 30%;*/
-        margin-top: 19.5px;
-        border-color: lightgray;
-        border-radius: 10px;
-        text-align: center;
-        background-color: aliceblue;
-      }
-
-      .icon_button{
-      /*  position: absolute;
-        top: 35%;*/
-        height: 40%;
-        border: none;
-        background-color: white;
-        font-size: 20px;
-        display: inline-block;
-    }
-      .ranking_table{
+     .ranking_table{
           height: 12%; 
           overflow:auto;
           margin-bottom: 3vh;
@@ -54,33 +22,9 @@
       .odd{
           background-color: aliceblue;
       }
-      #nav {
-        background-color: white;
-        position: sticky;
-        top: 0;
-        height: 65px;
-        z-index: 1;
-      }
-      #links {
-        position: absolute;
-        height: 100%;
-        width: 500px;
-        right: 0;
-        margin: 0;
-        font-weight: bold;
-        font-size: 1.1em;
-        display: inline-block;
-      }
-      #tools{
-        position: absolute;
-        top: 0%;
-        height: 100%;
-        margin-left: 10px;
-        display: inline-block;
-      }
-
+     
       #contents {
-        position: relative;
+        /*position: relative;*/
         /*height: 1700px;*/
         height: 300vh;
       }
@@ -105,9 +49,6 @@
           margin-left: 10%;
           table-layout: fixed;
       }
-      ul {
-        list-style-type: none;
-      }
       li {
         float: left;
         height: 25px;
@@ -118,15 +59,6 @@
       }
       td, th, tr{
           height: 3vh;
-      }
-      mark{
-          font-weight: bold;
-      }
-      *:focus {
-        outline: none;
-      }
-      a {
-        text-decoration: none;
       }
     </style>
     <script>
@@ -174,7 +106,7 @@
         document.getElementById(focused_li_id).style.backgroundColor = 'aliceblue';})
     </script>
   </head>
-  <body>
+  <body style="background-color: aliceblue;">
     <div id="nav">
         <a href="/overview"><img class="logo" src="{% static "logo_bird.png" %}"></a>    
     <div id='tools'> 
@@ -198,7 +130,7 @@
       </form>
       <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
     </div>
-      <ul id="links">
+      <ul id="links" style="width: 500px">
           <li id="link1" style="background-color: aliceblue" onclick="move(this)">漲跌排行</li>
          <li id="link2" onclick="move(this)">成交量排行</li>
          <li id="link3" onclick="move(this)">本益比排行</li>

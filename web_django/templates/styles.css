@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  background-color: aliceblue;
   min-width: 1200px; /*如果視窗寬度<800 就會需要scroll*/
+  font-size: 16px;
 }
 .logo {
   /*position: absolute;*/
@@ -53,16 +53,11 @@ body {
 #links {
   position: absolute;
   height: 100%;
-  width: 800px;
   right: 0;
   margin: 0;
   font-weight: bold;
   font-size: 1.1em;
   display: inline-block;
-}
-#contents {
-  position: relative;
-  height: 700px;
 }
 #title {
   position: absolute;
@@ -70,11 +65,6 @@ body {
   height: 10%;
   left: 5%;
   top: 2%;
-  /*padding-top: 1%;
-        padding-bottom: 1%;
-        margin-top: 1%;
-        margin-left: 10%;
-        margin-right: 10%;*/
   text-align: center;
   background-color: white;
 }
@@ -113,26 +103,9 @@ body {
         margin-right: 75%;*/
   background-color: white;
 }
-#dashboard {
-  position: absolute;
-  /*height: 1000px;*/
-  padding-bottom: 5%;
-  top: 14%;
-  /*margin-top: 1%;
-          margin-left: 30%;*/
-  background-color: white;
-}
 ul {
   list-style-type: none;
 }
-li {
-  float: left;
-  height: 25px;
-  padding: 20px;
-}
-/*      div{
-          overflow: auto;
-      }*/
 mark {
   font-weight: bold;
 }
