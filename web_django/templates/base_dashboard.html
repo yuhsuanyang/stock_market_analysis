@@ -12,6 +12,7 @@
   </head>
 <style>
     #contents {
+    position: relative;
     height: 700px;
 }
 
@@ -24,16 +25,11 @@
           margin-left: 30%;*/
     background-color: white;
 }
-   li {
-    float: left;
-    height: 25px;
-    padding: 20px;
-    }
 
 </style>
   <script>
     function show() {
-      var x = document.getElementById("same_trade");
+      var x = document.getElementsByClassName("same_trade")[0];
       console.log(x);
       console.log(x.style.display);
       if (x.style.display == "block") {
@@ -69,7 +65,7 @@
         </form>
       <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
     </div>
-      <ul id="links" style="width: 800px">
+      <ul class="links" style="width: 800px">
         {% block link_list%}{% endblock%}  
         <!--<li style="background-color: aliceblue">近期股價</li>
         <li>資產負債表</li>
@@ -83,7 +79,7 @@
         <div id="basic_info">
           <span><font color="darkcyan" onclick="show()">{{industry_type}}</font></span>
           <span>上市日期: {{listed_date}}</span>
-          <div id="same_trade">
+          <div class="same_trade">
             <ul>
                 {% block same_trade %}{% endblock %}
               <!--{#% for stock_name in same_trade%}

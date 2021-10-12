@@ -9,7 +9,7 @@
 <li><a href="{{stock_info.get_dividend_url}}">股利政策</a></li>
 <li style="background-color: aliceblue">相似性比較</li>
 {% endblock %}{% block same_trade %}{% for stock_name in same_trade%}
-<li class="companies">
+<li>
   <a href="{{stock_name.get_similarity_url}}" target="_blank"
     ><font color="black">{{stock_name}}</font></a
   >
