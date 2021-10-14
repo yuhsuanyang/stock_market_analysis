@@ -8,45 +8,14 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+   <link rel="stylesheet" href="/css/styles.css" type="text/css"/>
     <style>
-      body {
-        margin: 0;
-        background-color: aliceblue;
-        min-width: 1200px; /*如果視窗寬度<800 就會需要scroll*/}
-     .logo {
-        /*position: absolute;*/
-        height: 100%;
-        margin-left: 10px;
-        display: inline-block;
-      }
-     .search_bar {
-        /*position: absolute;*/
-        width: 200px; 
-        height: 40%;
-        /*left: 80px;
-        top: 30%;
-        margin-top: 30%;*/
-        margin-top: 19.5px;
-        border-color: lightgray;
-        border-radius: 10px;
-        text-align: center;
-        background-color: aliceblue;
-      }
-
-      .icon_button{
-      /*  position: absolute;
-        top: 35%;*/
-        height: 40%;
-        border: none;
-        background-color: white;
-        font-size: 20px;
-        display: inline-block;
-    }
-      .ranking_table{
+     .ranking_table{
           height: 12%; 
           overflow:auto;
           margin-bottom: 3vh;
-          font-size: 1vw;
+          font-size: 0.9rem;
+          /*font-size: 1vw;*/
       }
       .even{
           background-color: white
@@ -54,44 +23,14 @@
       .odd{
           background-color: aliceblue;
       }
-      #nav {
-        background-color: white;
-        position: sticky;
-        top: 0;
-        height: 65px;
-        z-index: 1;
-      }
-      #links {
-        position: absolute;
-        height: 100%;
-        width: 500px;
-        right: 0;
-        margin: 0;
-        font-weight: bold;
-        font-size: 1.1em;
-        display: inline-block;
-      }
-      #tools{
-        position: absolute;
-        top: 0%;
-        height: 100%;
-        margin-left: 10px;
-        display: inline-block;
-      }
-
+     
       #contents {
-        position: relative;
-        /*height: 1700px;*/
         height: 300vh;
       }
       #dashboard {
-        /*position: absolute;*/
         width: 90%;
         height: 98%;
         margin-left: 5%;
-        /*margin-top: 1%;
-        left: 5%;
-        top: 1%;*/
         text-align: center;
         background-color: white;
       }
@@ -105,42 +44,17 @@
           margin-left: 10%;
           table-layout: fixed;
       }
-      ul {
-        list-style-type: none;
-      }
-      li {
-        float: left;
-        height: 25px;
-        padding: 20px;
-      }
       h3{
           padding-top: 5vh;
       }
       td, th, tr{
           height: 3vh;
       }
-      mark{
-          font-weight: bold;
-      }
-      *:focus {
-        outline: none;
-      }
-      a {
-        text-decoration: none;
+      .linked_tr:hover{
+          background-color: lightgray;
       }
     </style>
     <script>
-        function change_color(element, status){
-            if (status == 'on'){
-                 element.style.backgroundColor = 'lightgray';
-            }else{
-                if (element.className == 'even'){
-                    element.style.backgroundColor = 'white';
-                    }
-                else{
-                    element.style.backgroundColor = 'aliceblue';                    }
-                }
-}
         function remove_li_color(){
              var links = document.getElementsByTagName("li");
             for (let i = 0; i < links.length; i++){
@@ -174,7 +88,7 @@
         document.getElementById(focused_li_id).style.backgroundColor = 'aliceblue';})
     </script>
   </head>
-  <body>
+  <body style="background-color: aliceblue;">
     <div id="nav">
         <a href="/overview"><img class="logo" src="{% static "logo_bird.png" %}"></a>    
     <div id='tools'> 
@@ -198,10 +112,10 @@
       </form>
       <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
     </div>
-      <ul id="links">
-          <li id="link1" style="background-color: aliceblue" onclick="move(this)">漲跌排行</li>
-         <li id="link2" onclick="move(this)">成交量排行</li>
+      <ul class="links" style="width: 500px">
          <li id="link3" onclick="move(this)">本益比排行</li>
+         <li id="link2" onclick="move(this)">成交量排行</li>
+          <li id="link1" style="background-color: aliceblue" onclick="move(this)">漲跌排行</li>
       </ul>
     </div>
     <div id="contents">
@@ -223,8 +137,7 @@
         <div class="ranking_table">
             <table>
                 {% for row, url_ in rise %}
-                <tr class="{% cycle 'even' 'odd' %}" onclick="window.open('{{url_}}');" onmouseover="change_color(this, 'on')"
-                    onmouseout="change_color(this, 'off')">
+                <tr class="{% cycle 'even' 'odd' %} linked_tr" onclick="window.open('{{url_}}');"> 
                     {% for value in row %}
                         <td>{{value}}</td>
                     {% endfor %}
@@ -248,8 +161,7 @@
         <div class="ranking_table">
             <table>
                 {% for row, url_ in drop %}
-                <tr class="{% cycle 'even' 'odd' %}" onclick="window.open('{{url_}}');" onmouseover="change_color(this, 'on')"
-                        onmouseout="change_color(this, 'off')">
+                    <tr class="{% cycle 'even' 'odd' %} linked_tr" onclick="window.open('{{url_}}');"> 
                     {% for value in row %}
                         <td>{{value}}</td>
                     {% endfor %}
@@ -295,8 +207,7 @@
         <div class="ranking_table">
             <table>
                 {% for row, url_ in volume %}
-                <tr class="{% cycle 'even' 'odd' %}" onclick="window.open('{{url_}}');" onmouseover="change_color(this, 'on')"
-                        onmouseout="change_color(this, 'off')">
+                <tr class="{% cycle 'even' 'odd' %} linked_tr" onclick="window.open('{{url_}}');"> 
                     {% for value in row %}
                         <td>{{value}}</td>
                     {% endfor %}
@@ -320,8 +231,7 @@
         <div class="ranking_table">
             <table>
                 {% for row, url_ in PE %}
-                <tr class="{% cycle 'even' 'odd' %}" onclick="window.open('{{url_}}');" onmouseover="change_color(this, 'on')"
-                        onmouseout="change_color(this, 'off')">
+                <tr class="{% cycle 'even' 'odd' %} linked_tr" onclick="window.open('{{url_}}');"> 
                     {% for value in row %}
                         <td>{{value}}</td>
                     {% endfor %}

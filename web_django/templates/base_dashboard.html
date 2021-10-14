@@ -8,155 +8,28 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-    <link rel="stylesheet" href="{% static "styles.css" %}"/>
-    <!--<style>
-      body {
-        margin: 0;
-        background-color: aliceblue;
-        min-width: 1200px; /*如果視窗寬度<800 就會需要scroll*/
-      }
-      .logo {
-        /*position: absolute;*/
-        height: 100%;
-        margin-left: 10px;
-        display: inline-block;
-      }
-      .search_bar {
-        /*position: absolute;*/
-        width: 200px; 
-        height: 40%;
-        /*left: 80px;
-        top: 30%;
-        margin-top: 30%;*/
-        margin-top: 19.5px;
-        border-color: lightgray;
-        border-radius: 10px;
-        text-align: center;
-        background-color: aliceblue;
-      }
-    .icon_button{
-        /*position: absolute;
-        top: 35%*/;
-        height: 40%;
-        margin-left: 5px;
-        border: none;
-        background-color: white;
-        font-size: 20px;
-        display: inline-block;
-    }
-      .companies {
-        font-size: 10%;
-        padding: 5%;
-      }
-      #nav {
-        background-color: white;
-        position: sticky;
-        top: 0;
-        height: 65px;
-        z-index: 1;
-      }
-      #tools{
-        position: absolute;
-        top: 0%;
-        height: 100%;
-        margin-left: 10px;
-        display: inline-block;
-      }
-      #links {
-        position: absolute;
-        height: 100%;
-        width: 800px;
-        right: 0;
-        margin: 0;
-        font-weight: bold;
-        font-size: 1.1em;
-        display: inline-block;
-      }
-      #contents {
-        position: relative;
-        height: 700px;
-      }
-      #title {
-        position: absolute;
-        width: 90%;
-        height: 10%;
-        left: 5%;
-        top: 2%;
-        /*padding-top: 1%;
-        padding-bottom: 1%;
-        margin-top: 1%;
-        margin-left: 10%;
-        margin-right: 10%;*/
-        text-align: center;
-        background-color: white;
-      }
-      #basic_info {
-        position: absolute;
-        width: 40%;
-        height: 100%;
-        right: 5%;
-        top: 0%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        text-align: right;
-      }
-      #same_trade {
-        position: absolute;
-        height: 200px;
-        width: 50%;
-        top: 45%;
-        right: 10%;
-        border-color: black;
-        border-style: solid;
-        border-width:1px;
-        background-color: mintcream;
-        overflow: auto;
-        z-index: 1;
-        display: none;
-      }
-      #left_section {
-        position: absolute;
-        top: 14%;
-        left: 5%;
-        padding: 2%;
-        /*margin-left: 10%;
-        margin-top: 1%;
-        margin-right: 75%;*/
-        background-color: white;
-      }
-      #dashboard{
-          position: absolute;
-          /*height: 1000px;*/
-          padding-bottom: 5%;
-          top: 14%;
-          /*margin-top: 1%;
-          margin-left: 30%;*/
-          background-color: white;
-      }
-      ul {
-        list-style-type: none;
-      }
-      li {
-        float: left;
-        height: 25px;
-        padding: 20px;
-      }
-      mark{
-          font-weight: bold;
-      }
-      *:focus {
-        outline: none;
-      }
-      a {
-        color: black;
-        text-decoration: none;
-      }
-    </style>-->
+   <link rel="stylesheet" href="/css/styles.css" type="text/css"/>
   </head>
+<style>
+    #contents {
+    position: relative;
+    height: 700px;
+}
+
+    #dashboard {
+    position: absolute;
+    /*height: 1000px;*/
+    padding-bottom: 5%;
+    top: 14%;
+  /*margin-top: 1%;
+          margin-left: 30%;*/
+    background-color: white;
+}
+
+</style>
   <script>
     function show() {
-      var x = document.getElementById("same_trade");
+      var x = document.getElementsByClassName("same_trade")[0];
       console.log(x);
       console.log(x.style.display);
       if (x.style.display == "block") {
@@ -168,7 +41,7 @@
     window.onfocus = function(){ 
               window.location.reload(); }
   </script>
-  <body>
+  <body style='background-color: aliceblue'>
     <div id="nav">
         <a href="/overview"><img class="logo" src="{% static "logo_bird.png" %}"></a>
             {#%include 'search_bar.html'%#}
@@ -192,7 +65,7 @@
         </form>
       <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
     </div>
-      <ul id="links">
+      <ul class="links" style="width: 800px">
         {% block link_list%}{% endblock%}  
         <!--<li style="background-color: aliceblue">近期股價</li>
         <li>資產負債表</li>
@@ -206,7 +79,7 @@
         <div id="basic_info">
           <span><font color="darkcyan" onclick="show()">{{industry_type}}</font></span>
           <span>上市日期: {{listed_date}}</span>
-          <div id="same_trade">
+          <div class="same_trade">
             <ul>
                 {% block same_trade %}{% endblock %}
               <!--{#% for stock_name in same_trade%}

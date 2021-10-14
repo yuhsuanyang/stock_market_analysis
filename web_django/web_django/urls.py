@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
+from django.views.generic import TemplateView
 from meta_data.views import main
 from meta_data.summary import get_tables
 
@@ -31,4 +32,8 @@ urlpatterns = [
     path('analysis/', include('asset_debt.urls')),
     path('analysis/', include('dividend.urls')),
     path('analysis/', include('similarity.urls')),
+    path(
+        'css/styles.css',
+        TemplateView.as_view(template_name='styles.css',
+                             content_type='text/css'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
