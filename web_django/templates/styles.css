@@ -28,10 +28,10 @@ ul {
 .links {
   position: absolute;
   height: 100%;
-  right: 0;
+  right: 5%;
   margin: 0;
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 1.1rem;
   display: inline-block;
 }
 
@@ -133,6 +133,7 @@ ul {
 .links > li {
   height: 25px;
   padding: 20px;
+  float: right;
 }
 .same_trade li {
   height: 25px;

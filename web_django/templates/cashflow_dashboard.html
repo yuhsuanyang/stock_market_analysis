@@ -2,12 +2,12 @@
 {% extends "base_dashboard.html"%} 
 {%load static %}{% load plotly_dash %} 
 {% block link_list %}
-<li><a href="{{stock_info.get_price_url}}">近期股價<a></li>
+<li><a href="{{stock_info.get_similarity_url}}">相似性比較</a></li>
+<li><a href="{{stock_info.get_dividend_url}}">股利政策</a></li>
 <li><a href="{{stock_info.get_profit_loss_url}}">損益表</a></li>
 <li><a href="{{stock_info.get_asset_debt_url}}">資產負債表</a></li>
 <li style="background-color: aliceblue">現金流量表</li>
-<li><a href="{{stock_info.get_dividend_url}}">股利政策</a></li>
-<li><a href="{{stock_info.get_similarity_url}}">相似性比較</a></li>
+<li><a href="{{stock_info.get_price_url}}">近期股價<a></li>
 {% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
 <li>
   <a href="{{stock_name.get_cashflow_url}}" target="_blank"
