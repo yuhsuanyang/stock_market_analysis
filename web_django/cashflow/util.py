@@ -17,6 +17,7 @@ def create_dash(df):
     cashflow_table = plot_table(df)
     app.layout = html.Div([
         html.H3(children='近年現金流量表', style={'text-align': 'center'}),
+        html.P(children='單位: 千元', style={'marginLeft': '85%'}),
         dcc.Checklist(id='checkbox',
                       options=[{
                           'label': df.columns[i],
@@ -45,7 +46,7 @@ def create_dash(df):
                 line_type = 'solid'
             fig.add_trace(
                 go.Scatter(x=df['季'],
-                           y=df[col].values.reshape(-1) / 1e4,
+                           y=df[col].values.reshape(-1),
                            line=dict(dash=line_type),
                            mode='lines+markers',
                            name=col))
@@ -57,7 +58,7 @@ def create_dash(df):
             'yanchor': 'top',
             'text': '近年現金流量表'
         },
-                          yaxis_title='$NTD 萬')
+                          yaxis_title='$NTD 千')
 
         fig.update_xaxes(tickangle=45)
         return fig

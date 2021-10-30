@@ -75,6 +75,7 @@ def create_dash(df):
 
     div_children = [
         html.H3(children='近年損益表', style={'text-align': 'center'}),
+        html.P(children='單位: 千元', style={'marginLeft': '85%'}),
         dcc.Checklist(id='checkbox',
                       options=[{
                           'label': df1.columns[i],
@@ -165,7 +166,7 @@ def create_dash(df):
         for col in features:
             fig.add_trace(
                 go.Scatter(x=df1['季'],
-                           y=df1[col].values.reshape(-1) / 1e4,
+                           y=df1[col].values.reshape(-1),
                            mode='lines+markers',
                            name=col))
 
@@ -175,7 +176,7 @@ def create_dash(df):
             'xanchor': 'center',
             'yanchor': 'top'
         },
-                          yaxis_title='$NTD 萬')
+                          yaxis_title='$NTD 千')
 
         fig.update_xaxes(tickangle=45)
         return fig
