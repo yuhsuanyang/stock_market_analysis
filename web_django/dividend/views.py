@@ -1,6 +1,5 @@
 import pandas as pd
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.shortcuts import render
 from meta_data.models import StockMetaData
 from profit_loss.models import *
 from .models import DividendData
@@ -14,12 +13,6 @@ profit_loss_table_dict = {
     'insurance': InsuranceProfitLossData,
     'standard': StandardProfitLossData
 }
-
-
-def get_posted_query(request):
-    stock_id = request.POST['stock_id'].split(' ')[0]
-    return redirect(
-        reverse('dividend:dashboard', kwargs={'stock_id': stock_id}))
 
 
 def create_df(dividend_table, profit_loss_table):

@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.shortcuts import render
 
 from meta_data.models import StockMetaData
 from price.models import PriceData
@@ -28,11 +27,6 @@ profit_loss_table_dict = {
     'standard': StandardProfitLossData,
     'other': OtherProfitLossData
 }
-
-
-def get_posted_query(request):
-    stock_id = request.POST['stock_id'].split(' ')[0]
-    return redirect(reverse('price:dashboard', kwargs={'stock_id': stock_id}))
 
 
 def get_same_trade(industry_type):

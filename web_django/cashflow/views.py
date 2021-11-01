@@ -1,5 +1,4 @@
-from django.urls import reverse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
 from dashboard_utils.common_functions import *
 from .models import CashflowData
@@ -8,13 +7,6 @@ from .util import create_dash
 
 # Create your views here.
 meta_data = StockMetaData.objects.all()
-
-
-def get_posted_query(request):
-    stock_id = request.POST['stock_id'].split(' ')[0]
-    return redirect(
-        reverse('cashflow:dashboard', kwargs={'stock_id': stock_id}))
-
 
 def get_raw_data(stock_id):
     table = CashflowData.objects.filter(code=stock_id)

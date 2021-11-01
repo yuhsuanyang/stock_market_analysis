@@ -120,7 +120,6 @@ def main(request, stock_id):
     data['same_trade'] = same_trade
     data['stock_list'] = meta_data
     data['PE_mean'] = round(same_trade_PE_mean, 2)
-    data['stock_info'] = info
     #    data['profit_loss_url'] = info.get_profit_loss_url
     return render(request, 'price_dashboard.html', context=data)
 
