@@ -3,12 +3,12 @@
 {%load static %}{% load plotly_dash %} 
 {% block link_list %}
 <a href="{{stock_info.get_price_url}}">近期股價</a>
-<a href="{{stock_info.get_monthly_revenue_url}}">月營收表</a>
+<a href="{{stock_info.get_monthly_revenue_url}}" id="here">月營收表</a>
 <a href="{{stock_info.get_profit_loss_url}}">損益表</a>
 <a href="{{stock_info.get_asset_debt_url}}">資產負債表</a>
 <a href="{{stock_info.get_cashflow_url}}">現金流量表</a>
 <a href="{{stock_info.get_dividend_url}}">股利政策</a>
-<a href="{{stock_info.get_similarity_url}}" id="here">相似性比較</a>
+<a href="{{stock_info.get_similarity_url}}">相似性比較</a>
 
 {% endblock %}{% block same_trade %}{% for stock_name in same_trade%}
 <li>
@@ -18,7 +18,7 @@
 </li>
 {% endfor%} {% endblock %} {% block main_content %}
 <div id="dashboard" style="width: 90%; left: 5%"> 
-    {% plotly_app name='Similarity_Dashboard' ratio=1%}
+    {% plotly_app name='MonthlyRevenue_Dashboard' ratio=1%}
   </div>
 </div>
 {%endblock %}

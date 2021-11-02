@@ -51,12 +51,12 @@
           height: 3vh;
       }
       .linked_tr:hover{
-          background-color: lightgray;
+          background-color: Gainsboro;
       }
     </style>
     <script>
         function remove_li_color(){
-             var links = document.getElementsByTagName("li");
+             var links = document.getElementById("link_div").getElementsByTagName("A");
             for (let i = 0; i < links.length; i++){
                 links[i].style.backgroundColor = 'white';
                 }
@@ -112,11 +112,11 @@
       </form>
       <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
     </div>
-      <ul class="links" style="width: 500px">
-         <li id="link3" onclick="move(this)">本益比排行</li>
-         <li id="link2" onclick="move(this)">成交量排行</li>
-          <li id="link1" style="background-color: aliceblue" onclick="move(this)">漲跌排行</li>
-      </ul>
+    <div class="links" id="link_div">
+         <a id="link3" onclick="move(this)">本益比排行</a>
+         <a id="link2" onclick="move(this)">成交量排行</a>
+         <a id="link1" style="background-color: aliceblue" onclick="move(this)">漲跌排行</a>
+    </div>
     </div>
     <div id="contents">
       <div id="dashboard">

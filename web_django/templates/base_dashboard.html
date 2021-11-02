@@ -10,6 +10,7 @@
     />
    <link rel="stylesheet" href="/css/styles.css" type="text/css"/>
   </head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
     #contents {
     position: relative;
@@ -25,10 +26,47 @@
           margin-left: 30%;*/
     background-color: white;
 }
+    .icon {
+        display: none;
+        color: lightblue;
+        font-size: 20px;
+        }
+    @media screen and (max-width: 1300px) {
+      .links a.icon {float: left; display: block;}
+}
 
 </style>
   <script>
-    function show() {
+     window.onfocus = function(){ 
+              window.location.reload(); }
+     window.onload = function(){
+          links = document.getElementById("link_div").getElementsByTagName('A');
+          for (var i = 1; i < links.length; i++){
+                    if(links[i].id == 'here'){
+                        index = i;
+                        break;
+                          }
+                }
+          console.log(index);
+          start = Math.min(index, 4);
+          if (index >= 4){
+                 neighbors = [4, 5, 6, 7];   
+                }else{
+                 neighbors = range(index, index+4);
+                      }
+          console.log(neighbors);
+          if (innerWidth < 1300){
+                show_abbrev_links(neighbors)
+           }
+          }
+     function range(start, end){
+        var arr = [];
+        for (var i = start; i < end; i++){
+                  arr.push(i)
+              }
+        return arr
+            }
+      function show() {
       var x = document.getElementsByClassName("same_trade")[0];
       console.log(x);
       console.log(x.style.display);
@@ -38,8 +76,27 @@
         x.style.display = "block";
       }
     }
-    window.onfocus = function(){ 
-              window.location.reload(); }
+    
+    function show_abbrev_links(name_lists){
+        for(var i=1; i < links.length - 1; i ++){
+            if (name_lists.includes(i)){
+                links[i].style.display = 'block';}
+                  else{links[i].style.display = 'none';}}}
+
+    function turn_page(direction){
+        if (direction == 1){ //往右翻
+                start = Math.min(start + 1, 4);
+              }else{ // 往左翻
+                start = Math.max(start - 1, 1);
+                    }
+        var new_neighbors = range(start, start+4)
+        show_abbrev_links(new_neighbors);
+          }
+    window.addEventListener('resize', function small_window(){
+        if (innerWidth < 1300){
+            show_abbrev_links(neighbors);}
+        else{show_abbrev_links(range(1, 8));}
+                                  })
   </script>
   <body style='background-color: aliceblue'>
     <div id="nav">
@@ -65,13 +122,13 @@
         </form>
       <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
     </div>
-      <ul class="links" style="width: 800px">
-        {% block link_list%}{% endblock%}  
-        <!--<li style="background-color: aliceblue">近期股價</li>
-        <li>資產負債表</li>
-        <li>現金流量表</li>
-        <li>股利政策</li>-->
-      </ul>
+        <div class="links" id="link_div" >
+            <a href="javascript:void(0);" class="icon" onclick="turn_page(-1)">
+                <i class="fa fa-chevron-circle-left"></i></a>
+            {% block link_list%}{% endblock%}  
+            <a href="javascript:void(0);" class="icon" onclick="turn_page(1)">
+                <i class="fa fa-chevron-circle-right"></i></a>
+        </div>
     </div>
     <div id="contents">
       <div id="title">

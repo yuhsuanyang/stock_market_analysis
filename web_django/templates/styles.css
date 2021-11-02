@@ -94,6 +94,10 @@ ul {
   text-align: right;
 }
 
+#here {
+  background-color: aliceblue;
+}
+
 #left_section {
   position: absolute;
   top: 14%;
@@ -130,10 +134,13 @@ ul {
   margin-left: 10px;
   display: inline-block;
 }
-.links > li {
+.links > a {
   height: 25px;
   padding: 20px;
-  float: right;
+  float: left;
+}
+.links > a:hover {
+  background-color: whitesmoke;
 }
 .same_trade li {
   height: 25px;

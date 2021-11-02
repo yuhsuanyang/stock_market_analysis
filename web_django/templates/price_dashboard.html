@@ -2,12 +2,13 @@
 {% extends "base_dashboard.html"%} 
 {% load plotly_dash %} 
 {% block link_list %}
-<li><a href="{{stock_info.get_similarity_url}}">相似性比較</a></li>
-<li><a href="{{stock_info.get_dividend_url}}">股利政策</a></li>
-<li><a href="{{stock_info.get_profit_loss_url}}">損益表</a></li>
-<li><a href="{{stock_info.get_asset_debt_url}}">資產負債表</a></li>
-<li><a href="{{stock_info.get_cashflow_url}}">現金流量表</a></li>
-<li style="background-color: aliceblue">近期股價</li>
+<a href="{{stock_info.get_price_url}}" id="here">近期股價</a>
+<a href="{{stock_info.get_monthly_revenue_url}}">月營收表</a>
+<a href="{{stock_info.get_profit_loss_url}}">損益表</a>
+<a href="{{stock_info.get_asset_debt_url}}">資產負債表</a>
+<a href="{{stock_info.get_cashflow_url}}">現金流量表</a>
+<a href="{{stock_info.get_dividend_url}}">股利政策</a>
+<a href="{{stock_info.get_similarity_url}}">相似性比較</a>
 {% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
 <li>
   <a href="{{stock_name.get_price_url}}" target="_blank"
@@ -61,7 +62,7 @@
   <p>{{punishment_duration}}</p>
   {% endif %}
 </div>
-<div id="dashboard" style="width: 72%; left: 23%">
+<div id="dashboard" style="width: 73%; left: 22%">
     <!--<div class="{#% plotly_class name='Price_Dashboard' %#}">-->
     {% plotly_app name='Price_Dashboard' ratio=1%}
   </div>
