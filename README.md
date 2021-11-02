@@ -27,6 +27,9 @@ A UI to present stock data of listed market
    - [x] view: technical price analysis
    - [x] view: fundamentals
    - [x] similarity
+   - [x] monthly profit and average price
+   - [ ] chip analysis
+   - [ ] watching mode
 8. deploy on heroku
 
 ### data
@@ -85,3 +88,5 @@ A UI to present stock data of listed market
 - interact with table: `from <app name>.models import <table name>`
 - add data: `data = <table name>(....)`, `data.save()`
 - fetch all data: `<table name>.objects.all()`, return is a query set
+- query data by condition: `<table name>.objects.filter(<column name> = ...>`
+- sort data: `<table name>.objects.order_by(<column name>)`(add '-' for decending)

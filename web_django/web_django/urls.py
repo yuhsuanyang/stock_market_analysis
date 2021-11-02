@@ -32,6 +32,7 @@ urlpatterns = [
     path('analysis/', include('asset_debt.urls')),
     path('analysis/', include('dividend.urls')),
     path('analysis/', include('similarity.urls')),
+    path('analysis/', include('monthly_revenue.urls')),
     path(
         'css/styles.css',
         TemplateView.as_view(template_name='styles.css',

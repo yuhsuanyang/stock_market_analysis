@@ -23,6 +23,8 @@ terms = {
     'income': '收入',
     'invest_buy': '投信買進股數',
     'invest_sell': '投信賣出股數',
+    'month': '月',
+    'month_increment': '上月比較增減(%)',
     'net_interest_income': '利息淨收益',
     'net_noninterest_income': '利息外淨收益',
     'net_income': '淨收益',
@@ -35,6 +37,7 @@ terms = {
     'operation_expenses': '營業費用',
     'operation_cost': '營業成本',
     'real_estate': '資本支出',
+    'revenue': '當月營收',
     'total_assets': '資產總額',
     'total_debt': '負債總額',
     'total_equity': '權益總額',
@@ -42,5 +45,6 @@ terms = {
     'share_capital': '股本',
     'stock_dividend': '股票股利',
     'year': '年',
-    'year_EPS': '年度累積EPS'
+    'year_EPS': '年度累積EPS',
+    'year_increment': '去年比較增減(%)'
 }

@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'meta_data.apps.MetaDataConfig', 'price.apps.PriceConfig',
     'profit_loss.apps.ProfitLossConfig', 'cashflow.apps.CashflowConfig',
-    'asset_debt.apps.AssetDebtConfig', 'dividend.apps.DividendConfig'
+    'asset_debt.apps.AssetDebtConfig', 'dividend.apps.DividendConfig',
+    'monthly_revenue.apps.MonthlyRevenueConfig'
 ]
 
 MIDDLEWARE = [

@@ -17,5 +17,5 @@ table_style = {
     'width': '100%',
     'text-align': 'center',
     'marginTop': '50px',
-    'marginBottom': '50px'
+    'marginBottom': '50px',
 }
