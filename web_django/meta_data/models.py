@@ -41,3 +41,6 @@ class StockMetaData(models.Model):
 
     def get_similarity_url(self):
         return reverse('similarity:dashboard', args=[self.code])
+
+    def get_monthly_revenue_url(self):
+        return reverse('monthly_revenue:dashboard', args=[self.code])

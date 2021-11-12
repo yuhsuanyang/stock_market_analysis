@@ -13,7 +13,7 @@
 
 {% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
 <li>
-  <a href="{{stock_name.get_pofit_loss_url}}" target="_blank"
+    <a href="{{stock_name.get_profit_loss_url}}" target="_blank"
     ><font color="black">{{stock_name}}</font></a
   >
 </li>

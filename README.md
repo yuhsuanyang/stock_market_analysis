@@ -2,36 +2,6 @@
 
 A UI to present stock data of listed market
 
-### schedule
-
-1. cashflow table
-   - [x] crawl
-   - [x] visualize
-2. profit loss
-   - [x] crawl
-   - [x] visualize
-3. asset debt
-   - [x] crawl
-   - [x] visualize
-4. dividend
-   - [x] crawl
-   - [x] visualize
-5. stock price
-   - [x] crawl history
-   - [x] crawl real time
-   - [x] visualize
-6. recommandation
-7. cascade django
-   - [x] database
-   - [x] index
-   - [x] view: technical price analysis
-   - [x] view: fundamentals
-   - [x] similarity
-   - [x] monthly profit and average price
-   - [ ] chip analysis
-   - [ ] watching mode
-8. deploy on heroku
-
 ### data
 
 1. profit loss:

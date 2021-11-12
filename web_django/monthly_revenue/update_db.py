@@ -29,6 +29,7 @@ def crawl(year, month):
 
 def create_row(row, year, month):
     code = int(row['code'])
+    print(code)
     one_row = RevenueData(code=code,
                           year=year,
                           month=month,
