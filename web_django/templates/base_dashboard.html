@@ -33,6 +33,7 @@
         }
     @media screen and (max-width: 1300px) {
       .links a.icon {float: left; display: block;}
+      .links a:not(:nth-child(-n+5)):not(.icon){display: none;})
 }
 
 </style>
@@ -49,11 +50,7 @@
                 }
           console.log(index);
           start = Math.min(index, 4);
-          if (index >= 4){
-                 neighbors = [4, 5, 6, 7];   
-                }else{
-                 neighbors = range(index, index+4);
-                      }
+          neighbors = range(start, start+4);
           console.log(neighbors);
           if (innerWidth < 1300){
                 show_abbrev_links(neighbors)
@@ -68,34 +65,25 @@
             }
       function show() {
       var x = document.getElementsByClassName("same_trade")[0];
-      console.log(x);
-      console.log(x.style.display);
-      if (x.style.display == "block") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "block";
-      }
+//      console.log(x);
+//      console.log(x.style.display);
+      x.style.display = (x.style.display == "block") ? "none" : "block";
     }
     
     function show_abbrev_links(name_lists){
         for(var i=1; i < links.length - 1; i ++){
-            if (name_lists.includes(i)){
-                links[i].style.display = 'block';}
-                  else{links[i].style.display = 'none';}}}
+            links[i].style.display = name_lists.includes(i) ? "block" : "none";
+              }}
 
     function turn_page(direction){
-        if (direction == 1){ //往右翻
-                start = Math.min(start + 1, 4);
-              }else{ // 往左翻
-                start = Math.max(start - 1, 1);
-                    }
+        start = (direction == 1) ? (Math.min(start + 1, 4)) : (Math.max(start - 1, 1))
         var new_neighbors = range(start, start+4)
         show_abbrev_links(new_neighbors);
           }
     window.addEventListener('resize', function small_window(){
         if (innerWidth < 1300){
-            show_abbrev_links(neighbors);}
-        else{show_abbrev_links(range(1, 8));}
+           show_abbrev_links(neighbors);}
+      else{show_abbrev_links(range(1, 8));}
                                   })
   </script>
   <body style='background-color: aliceblue'>
@@ -137,7 +125,7 @@
           <span><font color="darkcyan" onclick="show()">{{industry_type}}</font></span>
           <span>上市日期: {{listed_date}}</span>
           <div class="same_trade">
-            <ul>
+            <ul style="padding: 0;">
                 {% block same_trade %}{% endblock %}
               <!--{#% for stock_name in same_trade%}
               <li class="companies">{{stock_name}}</li>
