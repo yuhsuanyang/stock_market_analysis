@@ -13,9 +13,9 @@ body {
   font-size: 16px;
 }
 
-li {
+/*li {
   float: left;
-}
+}*/
 
 mark {
   font-weight: bold;
@@ -56,12 +56,11 @@ ul {
 .same_trade {
   position: absolute;
   height: 200px;
-  width: 50%;
+  width: 40%;
   top: 45%;
   right: 10%;
-  border-color: black;
-  border-style: solid;
-  border-width: 1px;
+  text-align: center;
+  box-shadow: #6da7a2a3 0px 5px 15px;
   background-color: mintcream;
   overflow: auto;
   z-index: 1;
@@ -144,6 +143,10 @@ ul {
 }
 .same_trade li {
   height: 25px;
-  font-size: 10%;
+  font-size: 0.8em;
   padding: 5%;
+}
+
+.same_trade li:hover {
+  background-color: paleturquoise;
 }
