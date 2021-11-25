@@ -2,6 +2,13 @@ import dash_table
 import pandas as pd
 
 
+def create_price_sequence(model_table):
+    df = []
+    for row in model_table:
+        df.append([row.date, row.Close])
+    return pd.DataFrame(df, columns=['date', 'close'])
+
+
 def create_df(model_table):
     # create dataframe from django model table (QuerySet)
     df = {'year': [], 'season': []}

@@ -7,13 +7,7 @@ from django_plotly_dash import DjangoDash
 from dash.dependencies import Input, Output
 
 from dashboard_utils.common_styles import line_plot_style
-
-
-def create_price_sequence(model_table):
-    df = []
-    for row in model_table:
-        df.append([row.date, row.Close])
-    return pd.DataFrame(df, columns=['date', 'close'])
+from dashboard_utils.common_functions import create_price_sequence
 
 
 def create_df(stock_code, data):
