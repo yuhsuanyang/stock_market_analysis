@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'meta_data.apps.MetaDataConfig', 'price.apps.PriceConfig',
     'profit_loss.apps.ProfitLossConfig', 'cashflow.apps.CashflowConfig',
     'asset_debt.apps.AssetDebtConfig', 'dividend.apps.DividendConfig',
-    'monthly_revenue.apps.MonthlyRevenueConfig'
+    'monthly_revenue.apps.MonthlyRevenueConfig', 'chip.apps.ChipConfig'
 ]
 
 MIDDLEWARE = [

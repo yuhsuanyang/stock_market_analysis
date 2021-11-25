@@ -89,20 +89,6 @@ def get_price(stock_id):
     return data
 
 
-def get_institutional(stock_id):
-    institutional = institutional_data.filter(code=stock_id).order_by('date')
-    df = []
-    columns = list(institutional[0].get_values().keys())
-    for row in institutional:
-        values = row.get_values()
-        df.append([row.date] + [values[k] for k in values])
-    df = pd.DataFrame(df, columns=['date'] + columns)
-    df['foreign'] = df['foreign_buy'] - df['foreign_sell']
-    df['invest'] = df['invest_buy'] - df['invest_sell']
-    df['dealer'] = df['dealer_buy'] - df['dealer_sell']
-    return df[['date', 'foreign', 'invest', 'dealer']]
-
-
 def main(request, stock_id):
     info = meta_data.filter(code=stock_id)[0]
     same_trade = meta_data.filter(industry_type=info.industry_type)
@@ -110,8 +96,7 @@ def main(request, stock_id):
         code__in=[stock.code for stock in same_trade]).filter(date=today)
     same_trade_PE_mean = np.mean([stock.PE for stock in same_trade_price_data])
     data = get_price(stock_id)
-    institutional_df = get_institutional(stock_id)
-    app = create_dash(stock_code, info.name, history, institutional_df)
+    app = create_dash(stock_code, info.name, history)
 
     data['stock_id'] = f"{stock_id} {info.name}"
     data['stock_info'] = info

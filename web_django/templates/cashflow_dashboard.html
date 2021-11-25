@@ -3,6 +3,7 @@
 {%load static %}{% load plotly_dash %} 
 {% block link_list %}
 <a href="{{stock_info.get_price_url}}">近期股價</a>
+<a href="{{stock_info.get_chip_url}}">籌碼分析</a>
 <a href="{{stock_info.get_monthly_revenue_url}}">月營收表</a>
 <a href="{{stock_info.get_profit_loss_url}}">損益表</a>
 <a href="{{stock_info.get_asset_debt_url}}">資產負債表</a>

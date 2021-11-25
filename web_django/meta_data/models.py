@@ -44,3 +44,6 @@ class StockMetaData(models.Model):
 
     def get_monthly_revenue_url(self):
         return reverse('monthly_revenue:dashboard', args=[self.code])
+
+    def get_chip_url(self):
+        return reverse('chip:dashboard', args=[self.code])

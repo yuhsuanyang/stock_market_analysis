@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% extends "base_dashboard.html"%} 
+{%load static %}{% load plotly_dash %} 
+{% block link_list %}
+<a href="{{stock_info.get_price_url}}">近期股價</a>
+<a href="{{stock_info.get_chip_url}}" id="here">籌碼分析</a>
+<a href="{{stock_info.get_monthly_revenue_url}}">月營收表</a>
+<a href="{{stock_info.get_profit_loss_url}}">損益表</a>
+<a href="{{stock_info.get_asset_debt_url}}">資產負債表</a>
+<a href="{{stock_info.get_cashflow_url}}">現金流量表</a>
+<a href="{{stock_info.get_dividend_url}}"">股利政策</a>
+<a href="{{stock_info.get_similarity_url}}">相似性比較</a>
+
+{% endblock %} {% block same_trade %} {% for stock_name in same_trade%}
+<li>
+  <a href="{{stock_name.get_chip_url}}" target="_blank"
+    ><font color="black">{{stock_name}}</font></a
+  >
+</li>
+{% endfor%} {% endblock %} {% block main_content %}
+<div id="left_section" style="width: 12%">
+  <h3>指標解釋</h3>
+  <p><strong>董監持股</strong>：公司經營階層持有自家股數的多寡 反應經營高層對自家公司的信心程度</p>
+  <p><strong>外資</strong>：台灣以外的國外投資機構 重視基本面 多使用長期投資</p>
+  <p><strong>投信：</strong>國內的證券投資公司 募集投資人的錢來投資 偏好波段操作</p>
+  <p><strong>自營商：</strong>證券公司自己的投資部門 用公司的錢來投資 可以和證交所直接買賣 偏好短期策略 能快速獲利的標的</p>
+  <p><strong>融券：</strong>預期股價會跌 向券商借股票來賣 未來再買股票來還 </p>
+  <p><strong>融資：</strong>預期股價會漲 向券商借錢來買股票</p>
+
+</div>
+<div id="dashboard" style="width: 73%; left: 22%;">
+    {% plotly_app name='Chip_Dashboard' ratio=1%}
+  </div>
+</div>
+{%endblock %}

@@ -48,7 +48,8 @@
           padding-top: 5vh;
       }
       td, th, tr{
-          height: 3vh;
+          /*height: 3vh;*/
+          height: 10%;
       }
       .linked_tr:hover{
           background-color: Gainsboro;
@@ -113,9 +114,9 @@
       <a href={%url 'index'%}><button class="icon_button"><i class="fa fa-home"></i></button></a>
     </div>
     <div class="links" id="link_div">
-         <a id="link3" onclick="move(this)">本益比排行</a>
-         <a id="link2" onclick="move(this)">成交量排行</a>
          <a id="link1" style="background-color: aliceblue" onclick="move(this)">漲跌排行</a>
+         <a id="link2" onclick="move(this)">成交量排行</a>
+         <a id="link3" onclick="move(this)">本益比排行</a>
     </div>
     </div>
     <div id="contents">
