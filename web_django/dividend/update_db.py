@@ -50,6 +50,7 @@ def query_dividend(stock_code):
     df = df.drop(drop_index)
     df['ex_dividend_date'] = df['ex_dividend_date'].apply(convert_date_form)
     df['distribute_date'] = df['distribute_date'].apply(convert_date_form)
+    df['season'] = df['season'].astype(float)
     return df
 
 
@@ -72,8 +73,8 @@ def main():
         else:
             latest_year = 101
             latest_season = 0
-        if (latest_year != df.iloc[0].year) and (latest_season !=
-                                                 df.iloc[0].season):
+        if (latest_year != df.iloc[0].year) or (latest_season !=
+                                                df.iloc[0].season):
             row = DividendData(code=int(stock_code),
                                year=df.iloc[0].year,
                                season=df.iloc[0].season,
