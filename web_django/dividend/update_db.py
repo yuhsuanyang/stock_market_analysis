@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -43,6 +44,7 @@ def query_dividend(stock_code):
                           'year', 'season', 'cash_dividend', 'stock_dividend',
                           'ex_dividend_date', 'distribute_date'
                       ])
+
     drop_index = df[(df.distribute_date == '-') |
                     (df.ex_dividend_date == '尚未公布')].index
     df = df.drop(drop_index)
@@ -52,16 +54,37 @@ def query_dividend(stock_code):
 
 
 def main():
-    DividendData.objects.all().delete()
-    for stock_code in stocks:
+    counter = 0
+    no_dividend = []
+    for i, stock_code in enumerate(stocks):
         df = query_dividend(stock_code)
-        print(stock_code)
-        for i in range(len(df)):
+        if not len(df):
+            no_dividend.append(stock_code)
+            continue
+        else:
+            counter += 1
+
+        historical_data = DividendData.objects.filter(code=stock_code)
+        if len(historical_data):
+            latest_data = historical_data.order_by('-year', '-season')[0]
+            latest_year = latest_data.year
+            latest_season = latest_data.season
+        else:
+            latest_year = 101
+            latest_season = 0
+        if (latest_year != df.iloc[0].year) and (latest_season !=
+                                                 df.iloc[0].season):
             row = DividendData(code=int(stock_code),
-                               year=df.iloc[i].year,
-                               season=df.iloc[i].season,
-                               distribute_date=df.iloc[i].distribute_date,
-                               ex_dividend_date=df.iloc[i].ex_dividend_date,
-                               cash=df.iloc[i].cash_dividend,
-                               stock=df.iloc[i].stock_dividend)
+                               year=df.iloc[0].year,
+                               season=df.iloc[0].season,
+                               distribute_date=df.iloc[0].distribute_date,
+                               ex_dividend_date=df.iloc[0].ex_dividend_date,
+                               cash=df.iloc[0].cash_dividend,
+                               stock=df.iloc[0].stock_dividend)
             row.save()
+            print(stock_code, 'update dividend')
+        if not i % 10 and i > 0:
+            print('take a 1-min break ...')
+            time.sleep(30)
+    print(counter, 'companies have founded dividend')
+    return no_dividend
