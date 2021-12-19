@@ -23,7 +23,7 @@ def crawl(year, month):
 
     processed_dfs = pd.concat(processed_dfs, ignore_index=True)
     total = processed_dfs[processed_dfs['code'] == '合計'].index
-    data = processed_dfs.drop(total).dropna().reset_index(drop=True)
+    data = processed_dfs.drop(total).fillna(0).reset_index(drop=True)
     return data
 
 

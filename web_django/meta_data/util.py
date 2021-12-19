@@ -50,8 +50,8 @@ def download_stock_price(datestr):  # 下載某天股價
 
 def download_institutional_investor(date):
     # 下載某天三大法人
-    r = requests.get('http://www.tse.com.tw/fund/T86?response=csv&date=' +
-                     date + '&selectType=ALLBUT0999')
+    r = requests.get('http://www.twse.com.tw/fund/T86?response=csv&date=' +
+                     date + '&selectType=ALL')
     try:
         df = pd.read_csv(StringIO(r.text),
                          header=1).dropna(how='all', axis=1).dropna(how='any')

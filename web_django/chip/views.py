@@ -28,16 +28,19 @@ def download(stock_code):
     data['increment'] = data['increment'].apply(lambda x: x.replace(',', ''))
     data['ratio'] = data['ratio'].apply(lambda x: x.replace('%', ''))
     data = data.replace('', '0.0')
-
     res = requests.get(url2)
     soup = BeautifulSoup(res.text, "lxml")
     total_amount = soup.select('table')[-1].find_all(
         'td', class_='t3n1')[0].text.replace(',', '')
+    total_amount = int(total_amount)
     data = data.append(
         {
-            'term': '其他',
-            'amount': int(total_amount) - data['amount'].astype(int).sum(),
-            'ratio': 100 - data['ratio'].astype(float).sum()
+            'term':
+            '其他',
+            'amount':
+            total_amount - data['amount'].astype(int).sum(),
+            'ratio':
+            (total_amount - data['amount'].astype(int).sum()) / total_amount,
         },
         ignore_index=True)
     return date, data, total_amount

@@ -59,9 +59,9 @@ def create_row(code, data, season):
     cashflow_data_row.save()
 
 
-def main(action, year, season):
+def main(action, year, season, start=0):
     if action == 'add_data':
-        for i, stock in enumerate(stocks):
+        for i, stock in enumerate(stocks[start:]):
             id_ = stock.code
             print(id_)
             if stock.company_type in ['bank', 'holdings', 'insurance']:
@@ -82,5 +82,6 @@ if __name__ == "__name__":
     parser.add_argument('--action', type=str, default='add_data')
     parser.add_argument('--year', type=str, required=True)
     parser.add_argument('--season', type=str, required=True)
+    parser.add_argument('--start', type=int, required=False)
     args = parser.parse_args()
-    main(args.action, args.year, args.season)
+    main(args.action, args.year, args.season, args.start)
