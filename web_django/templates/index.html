@@ -10,80 +10,47 @@
         background-image: url("{% static "background.jpeg"%}");
         background-repeat: no-repeat;
         background-size: cover;
-        position: relative;
-        height: 60vh; /*是整個畫面的高度的60%*/
-        min-height: 400px;
+        padding-top: 5%;
+      }
+     .flex {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         text-align: center;
       }
+
       .content {
-        position: relative;
-        width: 100%; /*寬度會和back一樣*/
-        height: 70%; /*高度會是back的0.7*/
-        top: 30%; /*會從back的高度的30％開始*/
-      }
+        display: flex;
+        justify-content: space-around;
+        width: 30%; /*寬度會和back一樣*/
+        margin: 1% 2%;
+        font-weight: bold;
+       }
       .search{
-        position: absolute;
-        height: 10%;
-        width: 30%;
-        bottom: 0%;
-        left: 35%;
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-      }
-      .index_search_bar{
-        height: calc(100% - 4px);
+        display: flex;
+        justify-content: center;
+        height: 5vh;
         width: 100%;
-        padding: 0;
+      }
+      .search > form{
+        width: 60%;
+        transform: translate(0, -15%)
+      }
+      .search_bar{
+        height: 100%;
+        width: 80%;
         border-radius: 5px;
         text-align: center;
-        /*font-size: 100%;*/
+        margin: 0;
       }
       .search_button {
         height: 100%;
-        width: 100%;
+        width: 10%;
         border: none;
         border-radius: 5px;
         background-color: skyblue;
       }
-      .twii {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: column;
-        position: relative;
-        height: 30vh;
-        width: 40%;
-        margin: 0 30% 0 30%;
-        text-align: center;
-        font-weight: bold;
-        }
-      .twii_block {
-        position: absolute;
-        width: 18%;
-        height: 100%;
-        top: 5%; 
-      }
-    .item1{
-        display: flex;
-        flex-wrap: wrap;
-        flex-basis: 50%;
-        flex-direction: row;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        justify-content: center;
-        align-items: center;
-        width: 50%;
-    }
-    .item2{
-        flex: 0 0 100%;
-        margin: 10px;
-    }
-   .item3{
-        flex: 0 0 100%;
-        margin: 10px;
-    }
-
-    .mid_size_font{
+      .mid_size_font{
         font-size: 1.7rem;
     }
     .big_size_font{
@@ -92,23 +59,23 @@
     .grid{
         display: grid;
         grid-template-columns: 50% 50%; /*給兩個數字就是兩個columns*/
-        grid-gap: 5px;
+        grid-template-rows: 50% 50%; /*給兩個數字就是兩個columns*/
+        grid-gap: 0.3rem 1rem;
         justify-content: center;
-        margin-right: 20%;
+        text-align: center;
     }
     .grid > div{
         font-size: 1.2rem;
     }
+    .grid p{
+        margin: 0;
+    }
     #logo {
-        position: absolute;
-        width: 20%;
-        left: 40%;
-        bottom: 10%;
-        /*margin-top: 4%;*/
+        width: 45%;
       }
     #square{
-        margin-left: calc((100% - 8rem)/2);
-        margin-right: calc((100% - 8rem)/2);
+        padding-right: 1rem;
+        padding-left: 1rem;
         background-color: lightgray;
       }
     li{
@@ -129,49 +96,65 @@
             }
   </script>
   </head>
-  <body style="min-height: 600px; font-size: 16px">
-    <div class="back">
-      <div class="content">
-          <a href="/overview"><img id="logo" src="{% static "logo_bird0.png" %}"></a>
-        <ul class="search">
-            <li style="width: 90%; margin-right: 2%;"><form style="height: 100%;" action={% url 'price:posted_query' %} method="POST" target="_blank">
+  <body style="min-height: 600px;">
+    <div style="height: 100%">
+        <div class="flex back">
+            <div class="flex" style="width: 50%; flex-direction: column">
+                <a href="/overview"><img id="logo" src="{% static "logo_bird0.png" %}"></img></a>
+                <div class="search">
+                 <form action={% url 'price:posted_query' %} method="POST" target="_blank">
         <!--尋找name 為 price:posted_query 的這個url, post 給他 -->
         <!--<form action="/analysis/" method="POST">-->
-                {% csrf_token %}
-                <input
-                class="index_search_bar"
+                    {% csrf_token %}
+                    <input
+                class="search_bar"
                 type="text"
                 name="stock_id"
                 id="stock_code"
                 placeholder="查詢台股代碼/公司名稱"
                 list="query"
                 style="font-size: 100%;"
-                /></li>
-            <li style="width: 8%"><button class="search_button" type="submit"><i class="fa fa-search"></i></button></li>
+                    />
+                <!--<li style="width: 8%">-->
+                <button class="search_button" type="submit"><i class="fa fa-search"></i></button>
                 <datalist id="query">
                     {% for stock_name in stock_list %}
                     <option value="{{stock_name}}">
                     {% endfor %}
                 </datalist>
-            </form>
-        </div>
-      </div>
-    </div>
-    <div class="twii">
-        <div class='item1' >
-            <div class='item2 mid_size_font'>{{date}}</div>
-            <div class="item2 big_size_font" ><div id='square' style="background-color:{{trend_background}}"><font color="black">大盤<br>行情</font></div></div>
-        </div>
-        <div class='item1' >
-            <div class='item2 mid_size_font' style="margin-right: 20%;"><font color="{{trend}}">{{today_close}}</font></div>
-            <div class='item2 grid'>
-                <div>昨收<br>{{yesterday_close}}</div>
-                <div>開盤<br>{{open}}</div>
-                <div>最高<br>{{high}}</div>
-                <div>最低<br>{{low}}</div>
-
+                </form>
             </div>
         </div>
+      </div>
+      <div class="flex" style="flex-direction: column">
+          <div class="content">
+            <div class='item2 mid_size_font'>{{date}}</div>
+            <div class='item2 mid_size_font'><font color="{{trend}}">{{today_close}}</font></div>
+          </div>
+          <div class="content">
+            <div>
+                <div id=square class="big_size_font" style="background-color:{{trend_background}}"><font color:"black">大盤<br>行情</font></div>
+            </div>
+            <div class="grid">
+                <div>
+                    <p>昨收</p>
+                    <p>{{yesterday_close}}</p>
+                </div>
+                <div>
+                    <p>開盤</p>
+                    <p>{{open}}</p>
+                </div>
+                <div>
+                    <p>最高</p>
+                    <p>{{high}}</p>
+                </div>
+                <div>
+                    <p>最低</p>
+                    <p>{{low}}</p>
+                </div>
+            </div>
+          </div>
+      </div>
     </div>
      </body>
 </html>
