@@ -48,9 +48,13 @@ def download_stock_price(datestr):  # 下載某天股價
         df.columns = ['code', 'Open', 'High', 'Low', 'Close', 'Volume', 'PE']
         stock_codes = [c.split(' ')[0] for c in stocks]
         df = df[df['code'].isin(stock_codes)].reset_index(drop=True)
+#        df['code'] = df['code'].astype(int).astype(str)
         converted_df = {}
         for col in df.columns:
-            converted_df[col] = df[col].apply(convert)
+            if col == 'code':
+                converted_df[col] = df[col]
+            else:
+                converted_df[col] = df[col].apply(convert)
         return pd.DataFrame(converted_df).dropna().reset_index(drop=True)
     else:
         print(datestr, 'no data')

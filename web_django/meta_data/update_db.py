@@ -4,11 +4,11 @@ from django.apps import apps
 from .models import StockMetaData
 from price.models import PriceData, InstitutionalInvestorData
 
-from .util import download_stock_price, download_institutional_investor, download_delisting
+from .util import ROOT, download_stock_price, download_institutional_investor, download_delisting, download_new_listing
 from dashboard_utils.model_checker import Checker
 
 models = [model for model in apps.get_models() if hasattr(model, 'get_columns')]
-
+today = datetime.today().strftime('%Y-%m-%d')
 def update_price_table(df, date):
     # 更新股價db
     for i in range(len(df)):
@@ -41,7 +41,7 @@ def update_institutional_table(df, date):
 
 
 def delete_delisting():
-    data = download_delisting(datetime.today().strftime('%Y-%m-%d'))
+    data = download_delisting(today)
     for code in data['上市編號']:
         for model in models:
             model.objects.filter(code=code).delete()
@@ -54,13 +54,26 @@ def add_listing(df):
                 name=df['公司簡稱'].iloc[i],
                 listed_date=df['listed_date'].iloc[i],
                 industry_type=df['產業別'].iloc[i],
-                company_type=standard
+                company_type='standard'
                 )
         row.save()
+    print('downloading price data')
     checker = Checker(PriceData)
-    dates = [date.strftime('%Y%-%m-%d') for date in checker.get_unique_values('date')]
+    dates = [date.strftime('%Y-%m-%d') for date in checker.get_unique_values('date')]
+    for date in dates:
+        price_data = download_stock_price(date.replace('-', ''))
+        if type(price_data) == pd.DataFrame:
+            price_data = price_data[price_data['code'].isin(df['公司代號'])].reset_index(drop=True)
+            update_price_table(price_data, date)
 
-
+    checker = Checker(InstitutionalInvestorData)
+    dates = [date.strftime('%Y-%m-%d') for date in checker.get_unique_values('date')]
+    print('downloading institutional data')
+    for date in dates:
+        ii_data = download_institutional_investor(date.replace('-', ''))
+        if type(ii_data) == pd.DataFrame:
+            ii_data = ii_data[ii_data['code'].isin(df['公司代號'])].reset_index(drop=True)
+            update_institutional_table(ii_data, date)
 
 
 def main(date, mode):
@@ -79,6 +92,7 @@ def main(date, mode):
         delete_delisting()
 
 ## TODO ##
-#    if mode == 'newlisting':
-
-
+    if mode == 'newlisting':
+#       df = download_new_listing(today.replace('-', ''))
+        add_listing(df)
+       
