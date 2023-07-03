@@ -75,3 +75,10 @@ def main(date, mode):
         data = download_institutional_investor(date.replace('-', ''))
         if type(data) == pd.DataFrame:
             update_institutional_table(data, date)
+    if mode == 'delisting':
+        delete_delisting()
+
+## TODO ##
+#    if mode == 'newlisting':
+
+

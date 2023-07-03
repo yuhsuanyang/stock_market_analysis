@@ -38,44 +38,6 @@ def get_latest_data():  # 即時爬取大盤資料
         'open': round(data['Open'].iloc[1], 2)
     }
 
-'''
-def update_price_table(df, date):
-    # 更新股價db
-    for i in range(len(df)):
-        first_row = PriceData.objects.all().filter(
-            code=int(df.code[i])).order_by("date")[0]
-        row = PriceData(code=int(df.code[i]),
-                        date=date,
-                        key=f"{int(df.code[i])} {date}",
-                        Open=df.Open[i],
-                        High=df.High[i],
-                        Low=df.Low[i],
-                        Close=df.Close[i],
-                        Volume=df.Volume[i],
-                        PE=df.PE[i])
-
-        # print(first_row.__str__())
-        first_row.delete()
-        row.save()
-
-
-def update_institutional_table(df, date):
-    for i in range(len(df)):
-        first_row = InstitutionalInvestorData.objects.all().filter(
-            code=int(df.code[i])).order_by("date")[0]
-        row = InstitutionalInvestorData(code=int(df.code[i]),
-                                        date=date,
-                                        key=f'{int(df.code[i])} {date}',
-                                        foreign_buy=df.foreign_buy[i],
-                                        foreign_sell=df.foreign_sell[i],
-                                        invest_buy=df.invest_buy[i],
-                                        invest_sell=df.invest_sell[i],
-                                        dealer_buy=df.dealer_buy[i],
-                                        dealer_sell=df.dealer_sell[i])
-        first_row.delete()
-        row.save()
-'''
-
 def update_data(compare_date, token):
     # 下載資料+更新db, table: 0/1
     table = {0: 'price', 1: 'institutional'}
