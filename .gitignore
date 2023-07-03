@@ -1,13 +1,15 @@
 code/.ipynb_checkpoints/
-code/__pycache__/
+__pycache__/
 data_sample/
 migrations/
 img_src/
 static/
+venv/
 data_date_record.txt
 db.sqlite3
 *.ipynb
 *.csv
+*.swp
 .DS_Store
 
 

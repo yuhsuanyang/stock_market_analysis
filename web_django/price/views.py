@@ -13,9 +13,7 @@ from .util import *
 root = Path(__file__).resolve().parent.parent  # ../web_django
 
 meta_data = StockMetaData.objects.all()
-price_data = PriceData.objects.all().order_by('-date')
 institutional_data = InstitutionalInvestorData.objects.all()
-today = str(price_data[0].date).strip()
 stock_code = ''
 history = pd.DataFrame([])
 punished = pd.read_csv(f'{root}/meta_data/punished.csv')
@@ -46,7 +44,7 @@ def color(price1, price2):  #price2: 昨收
         return 'white', 'black'
 
 
-def get_price(stock_id):
+def get_price(stock_id, today, price_data):
     global stock_code
     global history
     stock_code = stock_id
@@ -92,10 +90,12 @@ def get_price(stock_id):
 def main(request, stock_id):
     info = meta_data.filter(code=stock_id)[0]
     same_trade = meta_data.filter(industry_type=info.industry_type)
+    price_data = PriceData.objects.all().order_by('-date')
+    today = str(price_data[0].date).strip()
     same_trade_price_data = price_data.filter(
         code__in=[stock.code for stock in same_trade]).filter(date=today)
     same_trade_PE_mean = np.mean([stock.PE for stock in same_trade_price_data])
-    data = get_price(stock_id)
+    data = get_price(stock_id, today, price_data)
     app = create_dash(stock_code, info.name, history)
 
     data['stock_id'] = f"{stock_id} {info.name}"
@@ -114,10 +114,9 @@ def try_dash(request):
     return render(request, 'welcome.html', context)
 
 
-def price_visualizer():
-    whole_data = query_historical_price(stock_code, today)
-    return whole_data
-
+#def price_visualizer():
+#    whole_data = query_historical_price(stock_code, today)
+#    return whole_data
 
 #historical_stock_price = price_visualizer()
 #print(historical_stock_price)

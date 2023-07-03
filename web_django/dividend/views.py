@@ -26,7 +26,11 @@ def create_df(dividend_table, profit_loss_table):
         df['year'].append(row.year)
         if row.year >= 105 and row.season in [0, 2.5, 4]:
             #        print(f"{row.year}_4")
-            eps = profit_loss_table.filter(season=f"{row.year}_4")[0].EPS
+            eps = profit_loss_table.filter(season=f"{row.year}_4")
+            if len(eps):
+                eps = eps[0].EPS
+            else:
+                eps = '-'
         else:
             eps = '-'
         df['year_EPS'].append(eps)
