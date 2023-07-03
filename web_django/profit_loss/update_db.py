@@ -61,6 +61,7 @@ def crawl(year, season):
     for token in company_columns:
         print('   parsing', company_type[token])
         selected_columns = ['公司代號'] + company_columns[token]
+        df[token].columns = [col.replace(' ', '') for col in df[token].columns]
         one_df = df[token][selected_columns]
         one_df.columns = ['code'] + company_columns_renames[token]
         dfs[token] = one_df.replace('--', 0)

@@ -14,13 +14,14 @@ import secret
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = str(Path(__file__).resolve().parent.parent)
 print(BASE_DIR)  # xxxx/stock_market_analysis/web_django
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = secret.SECRET_KEY
+#SECRET_KEY = 'django-insecure-#ak#+#$pw8k=s6aox_g%7tg098#kx05wch3y9&1uuovlz0zy##'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -75,7 +76,7 @@ WSGI_APPLICATION = 'web_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR + '/db.sqlite3',
     }
 }
 
@@ -123,7 +124,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'meta_data/static/'),
     #    os.path.join(BASE_DIR, '/templates/')
 ]
-print(STATICFILES_DIRS)
+#print(STATICFILES_DIRS)
+print(STATIC_ROOT)
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

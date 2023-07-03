@@ -33,18 +33,20 @@ def query_dividend(stock_code):
                     one_data = [cells[2].text, '0']
 
                 one_data[0] = int(one_data[0]) - 1911
-                for i in [3, 4, 6, 7]:
+                for i in [3, 4, 6, 7, 8, 9]:
                     one_data.append(cells[i].text)
 
                 data.append(one_data)
         except:
             break
-    df = pd.DataFrame(data,
-                      columns=[
-                          'year', 'season', 'cash_dividend', 'stock_dividend',
-                          'ex_dividend_date', 'distribute_date'
-                      ])
-
+    df = pd.DataFrame(data)
+    if not len(df):
+        return df
+    df[4] = pd.DataFrame([df[5][i] if df[4][i] == '-' else df[4][i] for i in range(len(df))])[0]
+    df[6] = pd.DataFrame([df[7][i] if df[6][i] == '-' else df[6][i] for i in range(len(df))])[0]
+    df = df.drop(columns=[5, 7])
+    df.columns=['year', 'season', 'cash_dividend', 'stock_dividend',
+                'ex_dividend_date', 'distribute_date']
     drop_index = df[(df.distribute_date == '-') |
                     (df.ex_dividend_date == '尚未公布')].index
     df = df.drop(drop_index)

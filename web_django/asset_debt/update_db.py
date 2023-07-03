@@ -38,6 +38,7 @@ def crawl(year, season):
     df = pd.read_html(r.text, header=None)
     for token in company_type:
         print('   parsing', company_type[token])
+        df[token].columns = [col.replace(' ', '') for col in df[token].columns]
         if company_type[token] == 'standard':
             candidate_columns = company_columns['standard']
             renamed_columns = company_columns_renames['standard']

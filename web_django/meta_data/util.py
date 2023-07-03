@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from io import StringIO
 from pathlib import Path
+from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from .models import StockMetaData
 
@@ -26,6 +27,14 @@ def convert(x):
     else:
         return x
 
+def download_meta_data():
+    url = 'https://isin.twse.com.tw/isin/C_public.jsp?strMode=2'
+    res = requests.get(url)
+    df = pd.read_html(res.text)[0]
+    df.columns = df.iloc[0]
+    df = df.drop([0,1])
+    df['code'] = df['有價證券代號及名稱'].apply(lambda x: x.split('\u3000')[0])
+    return df
 
 def download_stock_price(datestr):  # 下載某天股價
     r = requests.post(
@@ -93,3 +102,42 @@ def download_punishment(compare_date):
     df = pd.DataFrame(json.loads(r.text)['data'])[[2, 6]]
     df.columns = ['code', 'duration']
     df.to_csv(f'{ROOT}/punished.csv', index=False)
+
+
+def download_profile(stock_code):
+    url = f'https://tw.stock.yahoo.com/quote/{stock_code}.TW/profile'
+    res = requests.get(url)
+    res.encoding = 'utf-8'
+    table = soup.find('div', class_='table-grid row-fit-half')
+    keys = [span.text for span in table.find_all('span', class_='')]
+    values = [div.text for div in table.find_all('div', class_='Py(8px) Pstart(12px) Bxz(bb)')]
+    data = {key: value for key, value in zip(keys, values)}
+    return data
+
+def download_new_listing(date):
+    url = f'https://www.twse.com.tw/rwd/zh/company/newlisting?date={date}&response=json'
+    res = requests.get(url)
+    res.encoding = 'utf-8'
+    data = json.loads(res.text)
+    df = pd.DataFrame(data['data'], columns=data['fields'])[['公司代號', '公司簡稱', '股票上市買賣日期']]
+    listed_date = []
+    for date in df['股票上市買賣日期']:
+        year, month, day = date.split('.')
+        year = str(int(year) + 1911)
+        listed_date.append('/'.join([year, month, date]))
+    df['listed_date'] = pd.DataFrame(listed_date)
+    meta_data = download_meta_data()[['code', '產業別']]
+    meta_data = meta_data[meta_data['code'].isin(df['公司代號'])]
+    df = df.merge(meta_data, left_on='公司代號', right_on='code')
+    return df
+
+
+def download_delisting(date):
+    url = f'https://www.twse.com.tw/rwd/zh/company/suspendListing?date={date}&response=json'
+    res = requests.get(url)
+    res.encoding = 'utf-8'
+    data = json.loads(res.text)
+    df = pd.DataFrame(data['data'], columns=data['fields'])[['上市編號', '公司名稱', '終止上市日期']]
+    return df
+
+        

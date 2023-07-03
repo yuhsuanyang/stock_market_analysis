@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from price.models import PriceData, InstitutionalInvestorData
 
 from .util import ROOT, meta_data, download_stock_price, download_institutional_investor, download_punishment
+from .update_db import update_price_table, update_institutional_table
 
 # root = Path(__file__).resolve().parent
 # print(root)  # ../meta_data
@@ -37,7 +38,7 @@ def get_latest_data():  # 即時爬取大盤資料
         'open': round(data['Open'].iloc[1], 2)
     }
 
-
+'''
 def update_price_table(df, date):
     # 更新股價db
     for i in range(len(df)):
@@ -73,7 +74,7 @@ def update_institutional_table(df, date):
                                         dealer_sell=df.dealer_sell[i])
         first_row.delete()
         row.save()
-
+'''
 
 def update_data(compare_date, token):
     # 下載資料+更新db, table: 0/1

@@ -60,3 +60,4 @@ A UI to present stock data of listed market
 - fetch all data: `<table name>.objects.all()`, return is a query set
 - query data by condition: `<table name>.objects.filter(<column name> = ...>`
 - sort data: `<table name>.objects.order_by(<column name>)`(add '-' for decending)
+- distinct: `<table name>.objects.values(<column name>).distinct()`
