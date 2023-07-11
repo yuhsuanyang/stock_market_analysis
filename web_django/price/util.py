@@ -31,6 +31,12 @@ def query_historical_price(stock_code, end_date):
 
 
 def create_dash(stock_code, company_name, price_df):
+    if len(price_df) >= 90:
+        slider_upper_bound = len(price_df) - 90
+        slider_upper_bound_label = price_df.date.iloc[-90]
+    else:
+        slider_upper_bound = len(price_df)
+        slider_upper_bound_label = price_df.date.iloc[-len(price_df)]
     features = ['daily', '5MA', '20MA', '60MA', 'k線']
     slider_style = {'margin-right': '-100px'}
     app = DjangoDash('Price_Dashboard')
@@ -65,8 +71,8 @@ def create_dash(stock_code, company_name, price_df):
                                     'label': price_df.date[0],
                                     'style': slider_style
                                 },
-                                len(price_df) - 90: {
-                                    'label': price_df.date.iloc[-90],
+                                slider_upper_bound: {
+                                    'label': slider_upper_bound_label,
                                     'style': {
                                         'margin-top': '-40px',
                                         'margin-right': '-100px'
