@@ -48,22 +48,28 @@ def delete_delisting():
 
 
 def add_listing(df):
+    new_codes = []
     for i in range(len(df)):
-        row = StockMetaData(
-                code=df['code'].iloc[i],
-                name=df['公司簡稱'].iloc[i],
-                listed_date=df['listed_date'].iloc[i],
-                industry_type=df['產業別'].iloc[i],
-                company_type='standard'
-                )
-        row.save()
+        if not len(StockMetaData.objects.filter(code=df['code'].iloc[i])):
+            row = StockMetaData(
+                    code=df['code'].iloc[i],
+                    name=df['公司簡稱'].iloc[i],
+                    listed_date=df['listed_date'].iloc[i],
+                    industry_type=df['產業別'].iloc[i],
+                    company_type='standard'
+                    )
+            row.save()
+            new_codes.append(df['code'].iloc[i])
+    print('new listed companies: ', new_codes)
+    if not len(new_codes):
+        return
     print('downloading price data')
     checker = Checker(PriceData)
     dates = [date.strftime('%Y-%m-%d') for date in checker.get_unique_values('date')]
     for date in dates:
         price_data = download_stock_price(date.replace('-', ''))
         if type(price_data) == pd.DataFrame:
-            price_data = price_data[price_data['code'].isin(df['公司代號'])].reset_index(drop=True)
+            price_data = price_data[price_data['code'].isin(new_codes)].reset_index(drop=True)
             update_price_table(price_data, date)
 
     checker = Checker(InstitutionalInvestorData)
@@ -72,7 +78,7 @@ def add_listing(df):
     for date in dates:
         ii_data = download_institutional_investor(date.replace('-', ''))
         if type(ii_data) == pd.DataFrame:
-            ii_data = ii_data[ii_data['code'].isin(df['公司代號'])].reset_index(drop=True)
+            ii_data = ii_data[ii_data['code'].isin(new_codes)].reset_index(drop=True)
             update_institutional_table(ii_data, date)
 
 
@@ -91,8 +97,9 @@ def main(date, mode):
     if mode == 'delisting':
         delete_delisting()
 
-## TODO ##
     if mode == 'newlisting':
-#       df = download_new_listing(today.replace('-', ''))
+        df = download_new_listing(today.replace('-', ''))
+        df.to_csv('meta_data/new_listed.csv', index=False)
+        df = pd.read_csv('meta_data/new_listed.csv', dtype={'公司代碼': str})
         add_listing(df)
        

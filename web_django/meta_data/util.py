@@ -128,7 +128,7 @@ def download_new_listing(date):
     for date in df['股票上市買賣日期']:
         year, month, day = date.split('.')
         year = str(int(year) + 1911)
-        listed_date.append('/'.join([year, month, date]))
+        listed_date.append('/'.join([year, month, day]))
     df['listed_date'] = pd.DataFrame(listed_date)
     meta_data = download_meta_data()[['code', '產業別']]
     meta_data = meta_data[meta_data['code'].isin(df['公司代號'])]
